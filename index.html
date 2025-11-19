@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wax Seal Mailing Service - Custom Bulk Mail with Elegance</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-brand" onclick="showScreen('home')">
+            <span class="logo-icon">⬡</span>
+            <span>WaxSeal Mail</span>
+        </div>
+        <div class="nav-links">
+            <a href="#" onclick="showScreen('home')">Home</a>
+            <a href="#" onclick="showScreen('step1')">Get Started</a>
+        </div>
+    </nav>
+
+    <!-- Progress Bar (hidden on home) -->
+    <div class="progress-container" id="progressContainer">
+        <div class="progress-bar">
+            <div class="progress-step" data-step="1">
+                <div class="step-circle">1</div>
+                <span>Upload Stamp</span>
+            </div>
+            <div class="progress-line"></div>
+            <div class="progress-step" data-step="2">
+                <div class="step-circle">2</div>
+                <span>Addresses</span>
+            </div>
+            <div class="progress-line"></div>
+            <div class="progress-step" data-step="3">
+                <div class="step-circle">3</div>
+                <span>Write Letter</span>
+            </div>
+            <div class="progress-line"></div>
+            <div class="progress-step" data-step="4">
+                <div class="step-circle">4</div>
+                <span>Review</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Home Screen -->
+    <section class="screen active" id="home">
+        <div class="hero">
+            <div class="hero-content">
+                <h1>Elegant Bulk Mailing<br>with <span class="highlight">Wax Sealed</span> Letters</h1>
+                <p>Make every letter memorable with custom wax seals featuring your logo. Perfect for invitations, announcements, and professional correspondence.</p>
+                <button class="btn-primary" onclick="showScreen('step1')">Start Your Campaign</button>
+            </div>
+            <div class="hero-image">
+                <div class="placeholder-image letter-preview">
+                    <div class="letter-mockup">
+                        <div class="letter-paper">
+                            <div class="letter-lines"></div>
+                        </div>
+                        <div class="wax-seal-demo">
+                            <span>YOUR LOGO</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="features">
+            <h2>Why Choose WaxSeal Mail?</h2>
+            <div class="feature-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">✦</div>
+                    <h3>Custom Wax Seals</h3>
+                    <p>Upload your logo or design and we'll create beautiful wax seals for every letter.</p>
+                    <div class="placeholder-image small">
+                        <span>Seal Sample</span>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">✉</div>
+                    <h3>Bulk Processing</h3>
+                    <p>Send hundreds or thousands of personalized letters with ease.</p>
+                    <div class="placeholder-image small">
+                        <span>Bulk Mail</span>
+                    </div>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">✎</div>
+                    <h3>Custom Messages</h3>
+                    <p>Write your own letter content with personalization options.</p>
+                    <div class="placeholder-image small">
+                        <span>Custom Letter</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="showcase">
+            <h2>See What's Possible</h2>
+            <div class="showcase-grid">
+                <div class="showcase-item">
+                    <div class="placeholder-image medium">
+                        <span>Wedding Invitations</span>
+                    </div>
+                    <p>Elegant wedding invitations</p>
+                </div>
+                <div class="showcase-item">
+                    <div class="placeholder-image medium">
+                        <span>Corporate Letters</span>
+                    </div>
+                    <p>Professional correspondence</p>
+                </div>
+                <div class="showcase-item">
+                    <div class="placeholder-image medium">
+                        <span>Holiday Cards</span>
+                    </div>
+                    <p>Seasonal greetings</p>
+                </div>
+                <div class="showcase-item">
+                    <div class="placeholder-image medium">
+                        <span>Thank You Notes</span>
+                    </div>
+                    <p>Appreciation letters</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="cta-section">
+            <h2>Ready to Make an Impression?</h2>
+            <p>Start your bulk mailing campaign today with custom wax-sealed letters.</p>
+            <button class="btn-primary large" onclick="showScreen('step1')">Get Started Now</button>
+        </div>
+    </section>
+
+    <!-- Step 1: Upload Stamp Pattern -->
+    <section class="screen" id="step1">
+        <div class="step-container">
+            <h2>Step 1: Upload Your Stamp Pattern</h2>
+            <p class="step-description">Upload your logo or design for the wax seal. SVG format is preferred for best quality.</p>
+
+            <div class="upload-area" id="stampUploadArea">
+                <div class="upload-icon">⬆</div>
+                <p>Drag & drop your file here or click to browse</p>
+                <p class="upload-hint">Supported formats: SVG (preferred), PNG, JPG</p>
+                <input type="file" id="stampInput" accept=".svg,.png,.jpg,.jpeg" hidden>
+            </div>
+
+            <div class="preview-section" id="stampPreviewSection" style="display: none;">
+                <h3>Your Wax Seal Preview</h3>
+                <div class="demo-letter">
+                    <div class="demo-letter-paper">
+                        <div class="demo-letter-content">
+                            <div class="letter-line"></div>
+                            <div class="letter-line"></div>
+                            <div class="letter-line short"></div>
+                            <div class="letter-line"></div>
+                            <div class="letter-line"></div>
+                            <div class="letter-line short"></div>
+                        </div>
+                    </div>
+                    <div class="demo-wax-seal" id="demoWaxSeal">
+                        <img id="stampPreviewImg" alt="Your stamp preview">
+                    </div>
+                </div>
+                <button class="btn-secondary" onclick="document.getElementById('stampInput').click()">Change Image</button>
+            </div>
+
+            <div class="step-actions">
+                <button class="btn-secondary" onclick="showScreen('home')">Back</button>
+                <button class="btn-primary" onclick="goToStep2()" id="step1Next" disabled>Next: Add Addresses</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Step 2: Upload Addresses -->
+    <section class="screen" id="step2">
+        <div class="step-container">
+            <h2>Step 2: Add Recipient Addresses</h2>
+            <p class="step-description">Upload a CSV file or manually enter addresses for your mailing list.</p>
+
+            <div class="tab-container">
+                <button class="tab-btn active" onclick="switchTab('csv')">Upload CSV</button>
+                <button class="tab-btn" onclick="switchTab('manual')">Manual Entry</button>
+            </div>
+
+            <div class="tab-content active" id="csvTab">
+                <div class="upload-area" id="csvUploadArea">
+                    <div class="upload-icon">📄</div>
+                    <p>Drag & drop your CSV file here or click to browse</p>
+                    <p class="upload-hint">CSV must include: Name (or First/Last Name) and Address fields</p>
+                    <input type="file" id="csvInput" accept=".csv" hidden>
+                </div>
+                <div class="csv-preview" id="csvPreview" style="display: none;">
+                    <h4>Preview (<span id="addressCount">0</span> addresses)</h4>
+                    <div class="address-table-container">
+                        <table id="addressTable">
+                            <thead></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-content" id="manualTab">
+                <div class="manual-entry-form">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="firstName">First Name *</label>
+                            <input type="text" id="firstName" placeholder="John">
+                        </div>
+                        <div class="form-group">
+                            <label for="lastName">Last Name *</label>
+                            <input type="text" id="lastName" placeholder="Doe">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="streetAddress">Street Address *</label>
+                        <input type="text" id="streetAddress" placeholder="123 Main Street">
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="city">City *</label>
+                            <input type="text" id="city" placeholder="New York">
+                        </div>
+                        <div class="form-group">
+                            <label for="state">State *</label>
+                            <input type="text" id="state" placeholder="NY">
+                        </div>
+                        <div class="form-group">
+                            <label for="zipCode">ZIP Code *</label>
+                            <input type="text" id="zipCode" placeholder="10001">
+                        </div>
+                    </div>
+                    <button class="btn-secondary" onclick="addManualAddress()">Add Address</button>
+                </div>
+
+                <div class="manual-addresses" id="manualAddresses" style="display: none;">
+                    <h4>Added Addresses (<span id="manualAddressCount">0</span>)</h4>
+                    <div class="address-list" id="addressList"></div>
+                </div>
+            </div>
+
+            <div class="validation-message" id="addressValidation"></div>
+
+            <div class="step-actions">
+                <button class="btn-secondary" onclick="showScreen('step1')">Back</button>
+                <button class="btn-primary" onclick="goToStep3()" id="step2Next" disabled>Next: Write Letter</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Step 3: Write Letter -->
+    <section class="screen" id="step3">
+        <div class="step-container">
+            <h2>Step 3: Compose Your Letter</h2>
+            <p class="step-description">Write the content that will be printed on each letter. Use placeholders for personalization.</p>
+
+            <div class="letter-composer">
+                <div class="placeholder-help">
+                    <strong>Available Placeholders:</strong>
+                    <span class="placeholder-tag" onclick="insertPlaceholder('{{FirstName}}')">{FirstName}</span>
+                    <span class="placeholder-tag" onclick="insertPlaceholder('{{LastName}}')">{LastName}</span>
+                    <span class="placeholder-tag" onclick="insertPlaceholder('{{FullName}}')">{FullName}</span>
+                    <span class="placeholder-tag" onclick="insertPlaceholder('{{City}}')">{City}</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="letterSubject">Subject / Greeting</label>
+                    <input type="text" id="letterSubject" placeholder="Dear {{FirstName}}," value="Dear {{FirstName}},">
+                </div>
+
+                <div class="form-group">
+                    <label for="letterBody">Letter Body</label>
+                    <textarea id="letterBody" rows="12" placeholder="Write your letter content here..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="letterClosing">Closing</label>
+                    <input type="text" id="letterClosing" placeholder="Sincerely," value="Sincerely,">
+                </div>
+
+                <div class="form-group">
+                    <label for="letterSignature">Signature Name</label>
+                    <input type="text" id="letterSignature" placeholder="Your Name or Company">
+                </div>
+            </div>
+
+            <div class="letter-preview-panel">
+                <h4>Live Preview</h4>
+                <div class="preview-letter" id="letterPreview">
+                    <p class="preview-greeting"></p>
+                    <p class="preview-body"></p>
+                    <p class="preview-closing"></p>
+                    <p class="preview-signature"></p>
+                </div>
+            </div>
+
+            <div class="step-actions">
+                <button class="btn-secondary" onclick="showScreen('step2')">Back</button>
+                <button class="btn-primary" onclick="goToStep4()" id="step3Next" disabled>Next: Review Campaign</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Step 4: Review -->
+    <section class="screen" id="step4">
+        <div class="step-container">
+            <h2>Step 4: Review Your Campaign</h2>
+            <p class="step-description">Review all your inputs before launching your campaign.</p>
+
+            <div class="review-grid">
+                <div class="review-card">
+                    <h3>Wax Seal Design</h3>
+                    <div class="review-seal" id="reviewSeal">
+                        <img id="reviewSealImg" alt="Your wax seal">
+                    </div>
+                    <button class="btn-link" onclick="showScreen('step1')">Edit</button>
+                </div>
+
+                <div class="review-card">
+                    <h3>Recipients</h3>
+                    <div class="review-recipients">
+                        <p><strong id="reviewAddressCount">0</strong> addresses</p>
+                        <div class="review-address-preview" id="reviewAddressPreview"></div>
+                    </div>
+                    <button class="btn-link" onclick="showScreen('step2')">Edit</button>
+                </div>
+
+                <div class="review-card full-width">
+                    <h3>Letter Content</h3>
+                    <div class="review-letter" id="reviewLetter">
+                        <p class="review-greeting"></p>
+                        <p class="review-body"></p>
+                        <p class="review-closing"></p>
+                        <p class="review-signature"></p>
+                    </div>
+                    <button class="btn-link" onclick="showScreen('step3')">Edit</button>
+                </div>
+            </div>
+
+            <div class="campaign-summary">
+                <h3>Campaign Summary</h3>
+                <div class="summary-stats">
+                    <div class="stat">
+                        <span class="stat-value" id="summaryLetters">0</span>
+                        <span class="stat-label">Letters</span>
+                    </div>
+                    <div class="stat">
+                        <span class="stat-value" id="summarySeals">0</span>
+                        <span class="stat-label">Wax Seals</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="step-actions center">
+                <button class="btn-secondary" onclick="showScreen('step3')">Back</button>
+                <button class="btn-primary large" onclick="startCampaign()">Start Campaign</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Work in Progress Screen -->
+    <section class="screen" id="wip">
+        <div class="wip-container">
+            <div class="wip-icon">🚧</div>
+            <h1>Work in Progress</h1>
+            <p>Your campaign is being processed. This feature is currently under development.</p>
+            <div class="wip-details">
+                <p>Campaign Details:</p>
+                <ul>
+                    <li><strong id="wipLetters">0</strong> letters queued</li>
+                    <li>Custom wax seal design uploaded</li>
+                    <li>Personalized content ready</li>
+                </ul>
+            </div>
+            <button class="btn-primary" onclick="showScreen('home')">Return to Home</button>
+            <button class="btn-secondary" onclick="resetCampaign()">Start New Campaign</button>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>&copy; 2024 WaxSeal Mail. All rights reserved.</p>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+</html>
