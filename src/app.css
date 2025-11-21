@@ -49,10 +49,10 @@
 
 body {
     font-family: 'Patrick Hand', cursive, sans-serif;
-    font-size: 28px;
+    font-size: 26px;
     background-color: var(--background-color);
     color: var(--text-color);
-    line-height: 1.6;
+    line-height: 1.4;
     min-height: 100vh;
     background-image:
         linear-gradient(rgba(255, 255, 255, 0.5) 1px, transparent 1px),
@@ -74,7 +74,7 @@ body {
 .navbar {
     max-width: 1800px;
     margin: 0 auto;
-    padding: 1.5rem 3rem;
+    padding: 1rem 2rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -104,7 +104,7 @@ body {
 }
 
 .logo-img {
-    height: 56px;
+    height: 55px;
     width: auto;
     object-fit: contain;
 }
@@ -154,7 +154,7 @@ body {
 /* Progress Bar */
 .progress-container {
     background-color: var(--card-background);
-    padding: 2rem 3rem;
+    padding: 1.5rem 2rem;
     border-bottom: 2px solid var(--border-color);
     display: none;
 }
@@ -261,8 +261,8 @@ body {
 .hero {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 5rem;
-    padding: 8rem 3rem;
+    gap: 3rem;
+    padding: 4rem 3rem;
     max-width: 1600px;
     margin: 0 auto;
     align-items: center;
@@ -298,7 +298,7 @@ body {
 .hero-content p {
     font-size: 2.2rem;
     color: var(--text-light);
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
 }
 
 /* Placeholder Images */
@@ -503,7 +503,7 @@ body {
 
 /* Features Section */
 .features {
-    padding: 8rem 3rem;
+    padding: 4rem 3rem;
     text-align: center;
     background-color: var(--card-background);
     border-top: 2px solid var(--border-color);
@@ -521,7 +521,7 @@ body {
 .feature-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 4rem;
+    gap: 2.5rem;
     max-width: 1600px;
     margin: 0 auto;
 }
@@ -534,7 +534,7 @@ body {
 }
 
 .feature-card {
-    padding: 3.5rem;
+    padding: 2rem;
     background: white;
     border: 2px solid var(--border-color);
     border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
@@ -551,26 +551,26 @@ body {
 .feature-icon {
     font-size: 5rem;
     color: var(--secondary-color);
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
     text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.1);
 }
 
 .feature-card h3 {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1rem;
     color: var(--primary-color);
     font-size: 2.2rem;
 }
 
 /* Showcase Section */
 .showcase {
-    padding: 8rem 3rem;
+    padding: 4rem 3rem;
     text-align: center;
 }
 
 .showcase-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 4rem;
+    gap: 2.5rem;
     max-width: 1600px;
     margin: 0 auto;
 }
@@ -584,7 +584,7 @@ body {
 
 .showcase-item {
     background: white;
-    padding: 2.5rem;
+    padding: 1.5rem;
     border: 2px solid var(--border-color);
     border-radius: 4px;
     box-shadow: var(--shadow);
@@ -606,14 +606,14 @@ body {
 }
 
 .showcase-item p {
-    margin-top: 1.5rem;
+    margin-top: 1rem;
     font-weight: bold;
     font-size: 1.7rem;
 }
 
 /* CTA Section */
 .cta-section {
-    padding: 8rem 3rem;
+    padding: 4rem 3rem;
     text-align: center;
     background-color: var(--primary-color);
     color: white;
@@ -649,11 +649,23 @@ body {
     background-color: #f0d385;
 }
 
+.cta-section .btn-secondary-outline {
+    background-color: white;
+    color: var(--primary-color);
+    border-color: white;
+}
+
+.cta-section .btn-secondary-outline:hover {
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    border-color: var(--secondary-color);
+}
+
 /* Step Container */
 .step-container {
     max-width: 1400px;
-    margin: 2rem auto;
-    padding: 2.5rem;
+    margin: 1.5rem auto;
+    padding: 2rem;
     background: white;
     border: 2px solid var(--border-color);
     border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
@@ -669,7 +681,7 @@ body {
 
 .step-description {
     color: var(--text-light);
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     text-align: center;
     font-size: 1.5rem;
 }
@@ -678,7 +690,7 @@ body {
 .upload-area {
     border: 3px dashed var(--border-color);
     border-radius: 15px;
-    padding: 3rem;
+    padding: 2rem;
     text-align: center;
     cursor: pointer;
     transition: all 0.3s;
@@ -701,7 +713,7 @@ body {
 .upload-icon {
     font-size: 4.5rem;
     color: var(--primary-color);
-    margin-bottom: 1rem;
+    margin-bottom: 0.8rem;
 }
 
 .upload-hint {
@@ -730,7 +742,7 @@ body {
 }
 
 .preview-section h3 {
-    margin-bottom: 2.5rem;
+    margin-bottom: 1.5rem;
     color: var(--primary-color);
     font-size: 3rem;
 }
@@ -933,8 +945,8 @@ body {
 .step-actions {
     display: flex;
     justify-content: space-between;
-    margin-top: 2.5rem;
-    padding-top: 2rem;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
     border-top: 2px dashed var(--border-color);
 }
 
@@ -946,13 +958,13 @@ body {
 /* Tabs */
 .tab-container {
     display: flex;
-    gap: 1.5rem;
-    margin-bottom: 3rem;
+    gap: 1rem;
+    margin-bottom: 2rem;
     justify-content: center;
 }
 
 .tab-btn {
-    padding: 1.4rem 2.8rem;
+    padding: 1rem 2rem;
     border: 2px solid var(--border-color);
     background: white;
     cursor: pointer;
@@ -986,7 +998,7 @@ body {
 
 /* Form Styles */
 .form-group {
-    margin-bottom: 1.3rem;
+    margin-bottom: 1rem;
 }
 
 .form-group label {
@@ -1000,7 +1012,7 @@ body {
 .form-group input,
 .form-group textarea {
     width: 100%;
-    padding: 1.1rem;
+    padding: 0.8rem;
     border: 2px solid var(--border-color);
     border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
     font-family: inherit;
@@ -1011,7 +1023,7 @@ body {
 
 .form-group textarea {
     border-radius: 15px;
-    min-height: 180px;
+    min-height: 140px;
 }
 
 .form-group input:focus,
@@ -1471,7 +1483,7 @@ body {
 /* Footer */
 .footer {
     text-align: center;
-    padding: 4rem;
+    padding: 2.5rem;
     background-color: var(--card-background);
     border-top: 2px solid var(--border-color);
     color: var(--text-light);
@@ -1483,13 +1495,13 @@ body {
 .review-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
-    gap: 3rem;
-    margin-bottom: 4rem;
+    gap: 2rem;
+    margin-bottom: 2.5rem;
 }
 
 .review-card {
     background: white;
-    padding: 3rem;
+    padding: 2rem;
     border: 2px solid var(--border-color);
     border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
     box-shadow: var(--shadow);
@@ -1506,7 +1518,7 @@ body {
     margin-bottom: 2rem;
     font-size: 2.2rem;
     border-bottom: 2px dashed var(--border-color);
-    padding-bottom: 0.8rem;
+    padding-bottom: 0.6rem;
 }
 
 .review-card.full-width {
@@ -1551,16 +1563,16 @@ body {
 .campaign-summary {
     background: var(--primary-color);
     color: white;
-    padding: 3rem;
+    padding: 2rem;
     border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
-    margin-top: 4rem;
+    margin-top: 2.5rem;
     box-shadow: var(--shadow-lg);
     transform: rotate(-1deg);
 }
 
 .campaign-summary h3 {
     color: white;
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
     text-align: center;
     font-size: 2.8rem;
 }
@@ -1575,7 +1587,7 @@ body {
     display: block;
     font-size: 4.5rem;
     font-weight: bold;
-    margin-bottom: 0.8rem;
+    margin-bottom: 0.5rem;
     text-shadow: 2px 2px 0px rgba(0, 0, 0, 0.2);
 }
 

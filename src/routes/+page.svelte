@@ -456,9 +456,9 @@
         <p>Start your bulk mailing campaign today with custom wax-sealed letters.</p>
         <div class="cta-buttons">
             <button onclick={startNewCampaign} class="btn-primary large" style="text-decoration: none;">Get Started Now</button>
-            <button onclick={startSampleLetter} class="btn-secondary-outline large" style="text-decoration: none;">Try a Sample First</button>
+            <button onclick={startSampleLetter} class="btn-secondary-outline large" style="background: white; text-decoration: none;">Try a Sample First</button>
         </div>
-        <p class="sample-note">Not sure yet? Try a sample letter for $15 to see our quality firsthand.</p>
+        <p class="sample-note" style="font-size: 1.3rem; color: white; background: none;">Not sure yet? Try a sample letter for $15 to see our quality firsthand.</p>
     </div>
 
     <!-- Contact Form -->
@@ -500,17 +500,17 @@
     }
 
     .preview-heading {
-        font-size: 1.5rem;
+        font-size: 1.2rem;
         color: var(--primary-color);
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.4rem;
         text-align: center;
         font-weight: 600;
     }
 
     .preview-subheading {
-        font-size: 1.2rem;
+        font-size: 1rem;
         color: var(--text-color);
-        margin-bottom: 1.5rem;
+        margin-bottom: 1rem;
         text-align: center;
         font-weight: 500;
     }
@@ -595,37 +595,37 @@
     }
 
     .about-us {
-        padding: 8rem 3rem;
+        padding: 4rem 3rem;
         max-width: 1600px;
         margin: 0 auto;
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 5rem;
+        gap: 3rem;
         align-items: center;
     }
 
     .about-content h2 {
-        font-size: 4.5rem;
+        font-size: 3rem;
         color: var(--primary-color);
-        margin-bottom: 3rem;
+        margin-bottom: 2.2rem;
     }
 
     .about-content p {
         font-size: 2rem;
-        margin-bottom: 2.5rem;
+        margin-bottom: 1.5rem;
         color: var(--text-color);
-        line-height: 1.8;
+        line-height: 1.5;
     }
 
     .about-images {
         position: relative;
-        height: 700px;
+        height: 600px;
         width: 100%;
     }
 
     .polaroid {
         background: white;
-        padding: 1.5rem 1.5rem 4.5rem 1.5rem;
+        padding: 1rem 1rem 3rem 1rem;
         box-shadow: var(--shadow);
         text-align: center;
         transition: all 0.3s ease;
@@ -643,14 +643,14 @@
     }
 
     .polaroid:nth-child(2) {
-        top: 110px;
+        top: 80px;
         left: 50%;
         transform: translateX(-50%) rotate(5deg);
         z-index: 2;
     }
 
     .polaroid:nth-child(3) {
-        top: 220px;
+        top: 160px;
         right: 0;
         transform: rotate(-6deg);
         z-index: 3;
@@ -681,9 +681,9 @@
 
     .showcase-img {
         width: 100%;
-        height: 300px;
+        height: 220px;
         object-fit: contain;
-        margin-bottom: 1rem;
+        margin-bottom: 0.8rem;
     }
 
     .hero-buttons, .cta-buttons {
@@ -705,12 +705,13 @@
         background: transparent;
         color: var(--primary-color, #8b4513);
         border: 2px solid var(--primary-color, #8b4513);
-        padding: 0.8rem 1.5rem;
+        padding: 1rem 2rem;
         border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
         font-weight: bold;
         cursor: pointer;
         transition: all 0.3s ease;
-        font-size: 1rem;
+        font-size: 1.3rem;
+        font-family: inherit;
     }
 
     .btn-secondary-outline:hover {
@@ -720,8 +721,8 @@
     }
 
     .btn-secondary-outline.large {
-        padding: 1rem 2rem;
-        font-size: 1.1rem;
+        padding: 1.2rem 3rem;
+        font-size: 1.5rem;
     }
 
     .sample-note {
