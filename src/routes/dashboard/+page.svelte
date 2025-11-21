@@ -418,7 +418,7 @@
     }
 
     .sample-hint {
-        font-size: 0.9rem;
+        font-size: 1rem;
         color: var(--text-muted, #666);
         margin-top: 1.5rem;
         font-style: italic;
@@ -475,7 +475,7 @@
         position: absolute;
         top: 1rem;
         right: 1rem;
-        font-size: 0.8rem;
+        font-size: 0.9rem;
         padding: 0.2rem 0.6rem;
         border-radius: 10px;
         font-weight: bold;

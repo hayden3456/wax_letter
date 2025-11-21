@@ -741,11 +741,11 @@
 
     /* Form Container */
     .form-container {
-        max-width: 600px;
+        max-width: 750px;
     }
 
     .form-hint {
-        font-size: 0.85rem;
+        font-size: 0.95rem;
         color: var(--text-light);
         margin-top: 0.25rem;
         display: block;

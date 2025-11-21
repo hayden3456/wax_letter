@@ -136,7 +136,7 @@
 
 <style>
     .step-container {
-        max-width: 600px;
+        max-width: 750px;
         margin: 2rem auto;
         padding: 2rem;
     }
@@ -160,7 +160,7 @@
         border-radius: 8px;
         padding: 1rem;
         margin-bottom: 2rem;
-        font-size: 0.9rem;
+        font-size: 1rem;
         color: #0066cc;
     }
 
@@ -205,7 +205,7 @@
         font-weight: 600;
         margin-bottom: 0.5rem;
         color: var(--text-color);
-        font-size: 0.9rem;
+        font-size: 1rem;
     }
 
     input {

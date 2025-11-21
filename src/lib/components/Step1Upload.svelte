@@ -258,7 +258,7 @@
         justify-content: center;
         align-items: center;
         width: 100%;
-        max-width: 600px;
+        max-width: 750px;
         max-height: 800px;
         margin: 0 auto;
         border-radius: 10px;
