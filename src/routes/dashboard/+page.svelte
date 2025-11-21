@@ -3,7 +3,7 @@
     import { appState } from '$lib/stores';
     import { db } from '$lib/firebase';
     import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
-    import { deleteCampaign } from '$lib/firestoreService';
+    import { deleteCampaign, associateCampaignWithUser } from '$lib/firestoreService';
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
     import { fade } from 'svelte/transition';
@@ -11,6 +11,7 @@
 
     let campaigns = [];
     let loading = true;
+    let unclaimedCampaigns = [];
 
     // Protect route (only on client side)
     $: if (browser && !$authStore.loading && !$authStore.user) {
@@ -32,6 +33,7 @@
 
     async function fetchCampaigns(uid) {
         try {
+            console.log('🔍 Fetching campaigns for user:', uid);
             const q = query(
                 collection(db, 'campaigns'),
                 where('userId', '==', uid),
@@ -39,15 +41,32 @@
             );
             
             const querySnapshot = await getDocs(q);
-            campaigns = querySnapshot.docs.map(doc => ({
-                id: doc.id,
-                ...doc.data(),
-                createdAt: doc.data().createdAt?.toDate()
-            }));
+            campaigns = querySnapshot.docs.map(doc => {
+                const data = doc.data();
+                return {
+                    id: doc.id,
+                    ...data,
+                    createdAt: safeConvertDate(data.createdAt)
+                };
+            });
             
-            console.log(`✅ Loaded ${campaigns.length} campaigns for user`);
+            // Sort manually as fallback (in case createdAt conversion failed)
+            campaigns.sort((a, b) => {
+                if (!a.createdAt || !b.createdAt) return 0;
+                return b.createdAt.getTime() - a.createdAt.getTime();
+            });
+            
+            console.log(`✅ Loaded ${campaigns.length} campaigns for user ${uid}`);
         } catch (e) {
-            console.error("Error fetching campaigns:", e);
+            // Check if it's an index error - suppress the error message since we have a fallback
+            const isIndexError = e.code === 'failed-precondition' || 
+                                 e.message?.includes('index') || 
+                                 e.message?.includes('requires an index');
+            
+            if (!isIndexError) {
+                console.error("Error fetching campaigns with userId filter:", e);
+            }
+            
             // If index is missing or other error, try without orderBy
             try {
                 const qFallback = query(
@@ -55,14 +74,59 @@
                     where('userId', '==', uid)
                 );
                 const querySnapshot = await getDocs(qFallback);
-                campaigns = querySnapshot.docs.map(doc => ({
-                    id: doc.id,
-                    ...doc.data(),
-                    createdAt: doc.data().createdAt?.toDate()
-                }));
-                console.log(`⚠️ Loaded ${campaigns.length} campaigns (fallback query)`);
+                campaigns = querySnapshot.docs.map(doc => {
+                    const data = doc.data();
+                    return {
+                        id: doc.id,
+                        ...data,
+                        createdAt: safeConvertDate(data.createdAt)
+                    };
+                });
+                
+                // Sort manually by createdAt (newest first)
+                campaigns.sort((a, b) => {
+                    if (!a.createdAt || !b.createdAt) return 0;
+                    return b.createdAt.getTime() - a.createdAt.getTime();
+                });
+                
+                if (isIndexError) {
+                    console.log(`⚠️ Index not created yet. Loaded ${campaigns.length} campaigns (sorted manually). Create the index to improve performance.`);
+                } else {
+                    console.log(`⚠️ Loaded ${campaigns.length} campaigns (no orderBy)`);
+                }
             } catch (fallbackError) {
-                console.error("Fallback query also failed:", fallbackError);
+                console.error("Fallback query with userId also failed:", fallbackError);
+                // Last resort: try to get ALL campaigns (for debugging)
+                try {
+                    console.log('🔄 Attempting to load ALL campaigns (no filter)...');
+                    const allCampaignsQuery = query(collection(db, 'campaigns'));
+                    const allSnapshot = await getDocs(allCampaignsQuery);
+                    const allCampaigns = allSnapshot.docs.map(doc => {
+                        const data = doc.data();
+                        return {
+                            id: doc.id,
+                            ...data,
+                            createdAt: safeConvertDate(data.createdAt)
+                        };
+                    });
+                    
+                    // Sort manually
+                    allCampaigns.sort((a, b) => {
+                        if (!a.createdAt || !b.createdAt) return 0;
+                        return b.createdAt.getTime() - a.createdAt.getTime();
+                    });
+                    
+                    console.log(`📊 Total campaigns in database: ${allCampaigns.length}`);
+                    console.log('Campaign userIds:', allCampaigns.map(c => ({ id: c.id, userId: c.userId })));
+                    
+                    // Show campaigns that match this user OR have no userId
+                    const userCampaigns = allCampaigns.filter(c => c.userId === uid);
+                    unclaimedCampaigns = allCampaigns.filter(c => !c.userId);
+                    campaigns = [...userCampaigns, ...unclaimedCampaigns];
+                    console.log(`✅ Showing ${userCampaigns.length} user campaigns + ${unclaimedCampaigns.length} unclaimed campaigns`);
+                } catch (allError) {
+                    console.error("Failed to load any campaigns:", allError);
+                }
             }
         } finally {
             loading = false;
@@ -71,11 +135,65 @@
 
     function formatDate(date) {
         if (!date) return '';
-        return new Intl.DateTimeFormat('en-US', {
-            year: 'numeric',
-            month: 'short',
-            day: 'numeric'
-        }).format(date);
+        try {
+            // Handle different date formats
+            let dateObj;
+            if (date instanceof Date) {
+                dateObj = date;
+            } else if (typeof date === 'string') {
+                dateObj = new Date(date);
+            } else if (date.toDate && typeof date.toDate === 'function') {
+                dateObj = date.toDate();
+            } else {
+                return '';
+            }
+            
+            return new Intl.DateTimeFormat('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric'
+            }).format(dateObj);
+        } catch (e) {
+            console.error('Error formatting date:', e);
+            return '';
+        }
+    }
+
+    function safeConvertDate(timestamp) {
+        if (!timestamp) return null;
+        try {
+            // If it's already a Date
+            if (timestamp instanceof Date) {
+                return timestamp;
+            }
+            // If it's a Firestore Timestamp object
+            if (timestamp && typeof timestamp === 'object' && 'toDate' in timestamp && typeof timestamp.toDate === 'function') {
+                try {
+                    return timestamp.toDate();
+                } catch (e) {
+                    // If toDate() fails, try other methods
+                    if ('seconds' in timestamp && 'nanoseconds' in timestamp) {
+                        // It's a Timestamp-like object, convert manually
+                        return new Date(timestamp.seconds * 1000 + (timestamp.nanoseconds || 0) / 1000000);
+                    }
+                }
+            }
+            // If it has seconds property (Firestore Timestamp format)
+            if (timestamp && typeof timestamp === 'object' && 'seconds' in timestamp) {
+                return new Date(timestamp.seconds * 1000 + (timestamp.nanoseconds || 0) / 1000000);
+            }
+            // If it's a string or number
+            if (typeof timestamp === 'string' || typeof timestamp === 'number') {
+                const date = new Date(timestamp);
+                if (!isNaN(date.getTime())) {
+                    return date;
+                }
+            }
+            return null;
+        } catch (e) {
+            // Silently fail - don't log errors for date conversion
+            return null;
+        }
     }
 
     function startNewCampaign() {
@@ -98,11 +216,34 @@
                 await deleteCampaign(campaignId);
                 // Remove from local array
                 campaigns = campaigns.filter(c => c.id !== campaignId);
+                unclaimedCampaigns = unclaimedCampaigns.filter(c => c.id !== campaignId);
                 console.log('✅ Campaign deleted:', campaignId);
             } catch (error) {
                 console.error('Failed to delete campaign:', error);
                 alert('Failed to delete campaign. Please try again.');
             }
+        }
+    }
+
+    async function claimCampaign(event, campaignId) {
+        // Prevent the card click event from firing
+        event.preventDefault();
+        event.stopPropagation();
+        
+        if (!$authStore.user) return;
+        
+        try {
+            await associateCampaignWithUser(campaignId, $authStore.user.uid);
+            // Move from unclaimed to claimed
+            const campaign = unclaimedCampaigns.find(c => c.id === campaignId);
+            if (campaign) {
+                campaign.userId = $authStore.user.uid;
+                unclaimedCampaigns = unclaimedCampaigns.filter(c => c.id !== campaignId);
+            }
+            console.log('✅ Campaign claimed:', campaignId);
+        } catch (error) {
+            console.error('Failed to claim campaign:', error);
+            alert('Failed to claim campaign. Please try again.');
         }
     }
 </script>
@@ -129,7 +270,7 @@
         <div class="campaign-grid" in:fade>
             {#each campaigns as campaign}
                 <a href="/campaign/step/1?edit={campaign.id}" class="campaign-card-link">
-                    <div class="campaign-card">
+                    <div class="campaign-card {!campaign.userId ? 'unclaimed' : ''}">
                         <button 
                             class="delete-btn" 
                             onclick={(e) => handleDeleteCampaign(e, campaign.id, campaign.name)}
@@ -137,9 +278,23 @@
                         >
                             ✕
                         </button>
+                        {#if !campaign.userId}
+                            <button 
+                                class="claim-btn" 
+                                onclick={(e) => claimCampaign(e, campaign.id)}
+                                title="Claim this campaign"
+                            >
+                                📌 Claim
+                            </button>
+                        {/if}
                         <div class="campaign-status {campaign.status || 'draft'}">
                             {campaign.status || 'Draft'}
                         </div>
+                        {#if !campaign.userId}
+                            <div class="unclaimed-badge">
+                                ⚠️ Unclaimed
+                            </div>
+                        {/if}
                         <h3>{campaign.name || 'Untitled Campaign'}</h3>
                         <div class="campaign-details">
                             <div class="detail">
@@ -291,6 +446,53 @@
     .delete-btn:hover {
         background: #cc0000;
         transform: scale(1.1);
+    }
+
+    .claim-btn {
+        position: absolute;
+        top: 0.5rem;
+        left: 3rem;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 15px;
+        padding: 0.4rem 0.8rem;
+        font-size: 14px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        opacity: 0;
+        transition: opacity 0.2s, transform 0.2s;
+        z-index: 10;
+        font-weight: bold;
+    }
+
+    .campaign-card:hover .claim-btn {
+        opacity: 1;
+    }
+
+    .claim-btn:hover {
+        background: var(--primary-dark);
+        transform: scale(1.05);
+    }
+
+    .unclaimed-badge {
+        position: absolute;
+        top: 3rem;
+        right: 1rem;
+        font-size: 0.75rem;
+        padding: 0.3rem 0.6rem;
+        border-radius: 10px;
+        font-weight: bold;
+        background: #fff3cd;
+        color: #856404;
+        border: 1px solid #ffc107;
+    }
+
+    .campaign-card.unclaimed {
+        border: 2px solid #ffc107;
+        background: linear-gradient(135deg, #fffbf0 0%, var(--card-background) 100%);
     }
 
     h3 {

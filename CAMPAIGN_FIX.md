@@ -109,10 +109,28 @@ Added ability to delete campaigns from the dashboard:
 - Removes campaign from both Firebase and local state
 - Helps clean up any unwanted blank campaigns
 
+## Additional Fixes (Latest)
+
+### Dashboard Not Showing Campaigns
+Fixed issue where campaigns in database weren't appearing in dashboard:
+- **Problem**: Campaigns without `userId` weren't showing up
+- **Solution**: Added fallback queries to show all campaigns (including unclaimed ones)
+- **Feature**: Visual indicators for unclaimed campaigns with "Claim" button
+- See: `FIREBASE_INDEX_SETUP.md` for Firebase index setup
+
+### Date Conversion Errors
+Fixed `createdAt?.toDate is not a function` errors:
+- Added `safeConvertDate()` function to handle multiple date formats
+- Supports Firestore Timestamps, Date objects, and ISO strings
+- Graceful error handling prevents crashes
+- Better date formatting with error recovery
+
 ## Additional Notes
 - The fix maintains backward compatibility with the `edit` flow
 - LocalStorage is properly cleared to prevent any caching issues
 - Firebase is also properly handled with new campaign IDs
 - All "Start Campaign" buttons across the site now behave consistently
 - Server-side rendering is now properly handled with browser checks
+- Dashboard now shows all campaigns (yours + unclaimed ones)
+- Date handling is robust across different Firebase data formats
 

@@ -106,7 +106,7 @@
             </div>
 
             <div class="support-info">
-                <p>Questions? Contact us at support@waxsealmail.com</p>
+                <p>Questions? <a href="/#contact">Contact us</a></p>
             </div>
         {/if}
     </div>
@@ -264,6 +264,16 @@
         border-top: 1px solid #eee;
         color: #999;
         font-size: 0.9rem;
+    }
+
+    .support-info a {
+        color: var(--primary-color, #8b4513);
+        text-decoration: underline;
+        transition: color 0.3s ease;
+    }
+
+    .support-info a:hover {
+        color: var(--primary-hover, #6d3610);
     }
 
     .btn-primary, .btn-secondary {

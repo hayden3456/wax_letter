@@ -223,3 +223,94 @@ export async function associateCampaignWithUser(campaignId, userId) {
     }
 }
 
+/**
+ * Get or create a session ID for homepage preview storage
+ * Uses userId if authenticated, otherwise creates a device session ID
+ * @param {string | null} userId - Optional user ID
+ * @returns {string} - Session identifier
+ */
+function getHomepageSessionId(userId) {
+    if (typeof window === 'undefined') return 'anonymous';
+    
+    if (userId) {
+        return `user_${userId}`;
+    }
+    
+    // Use device session ID stored in localStorage
+    let sessionId = localStorage.getItem('homepage_session_id');
+    if (!sessionId) {
+        // Generate a unique session ID
+        sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
+        localStorage.setItem('homepage_session_id', sessionId);
+    }
+    return sessionId;
+}
+
+/**
+ * Upload homepage generated preview image to Firebase Storage
+ * This will overwrite any existing preview for the same session/user
+ * @param {string} dataUrl - The data URL of the generated image
+ * @param {string | null} userId - Optional user ID
+ * @returns {Promise<string>} - The download URL
+ */
+export async function saveHomepagePreviewImage(dataUrl, userId = null) {
+    try {
+        const sessionId = getHomepageSessionId(userId);
+        const previewRef = ref(storage, `homepage/preview/${sessionId}`);
+        
+        // Upload will automatically overwrite if it exists
+        await uploadString(previewRef, dataUrl, 'data_url');
+        const downloadUrl = await getDownloadURL(previewRef);
+        
+        console.log('✅ Homepage preview image saved to cloud:', downloadUrl);
+        return downloadUrl;
+    } catch (error) {
+        console.error('Error saving homepage preview image:', error);
+        throw error;
+    }
+}
+
+/**
+ * Load homepage generated preview image from Firebase Storage
+ * @param {string | null} userId - Optional user ID
+ * @returns {Promise<string | null>} - The download URL or null if not found
+ */
+export async function loadHomepagePreviewImage(userId = null) {
+    try {
+        const sessionId = getHomepageSessionId(userId);
+        const previewRef = ref(storage, `homepage/preview/${sessionId}`);
+        
+        const downloadUrl = await getDownloadURL(previewRef);
+        console.log('✅ Homepage preview image loaded from cloud:', downloadUrl);
+        return downloadUrl;
+    } catch (error) {
+        // Image might not exist, that's okay
+        if (error.code === 'storage/object-not-found') {
+            return null;
+        }
+        console.error('Error loading homepage preview image:', error);
+        return null;
+    }
+}
+
+/**
+ * Delete homepage preview image from Firebase Storage
+ * @param {string | null} userId - Optional user ID
+ * @returns {Promise<void>}
+ */
+export async function deleteHomepagePreviewImage(userId = null) {
+    try {
+        const sessionId = getHomepageSessionId(userId);
+        const previewRef = ref(storage, `homepage/preview/${sessionId}`);
+        await deleteObject(previewRef);
+        console.log('✅ Homepage preview image deleted from cloud');
+    } catch (error) {
+        // Image might not exist, that's okay
+        if (error.code === 'storage/object-not-found') {
+            return;
+        }
+        console.error('Error deleting homepage preview image:', error);
+        throw error;
+    }
+}
+
