@@ -42,6 +42,7 @@
                 <!-- Show nothing or a small spinner -->
             {:else if $authStore.user}
                 <a href="/dashboard">Dashboard</a>
+                <a href="/profile">Profile</a>
                 <button class="btn-link" onclick={handleLogout}>Logout</button>
             {:else}
                 <a href="/login">Login</a>
