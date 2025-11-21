@@ -444,6 +444,7 @@
         <h2>Ready to Make an Impression?</h2>
         <p>Start your bulk mailing campaign today with custom wax-sealed letters.</p>
         <button onclick={startNewCampaign} class="btn-primary large" style="text-decoration: none;">Get Started Now</button>
+        <p class="cta-faq-link">Have questions? Check out our <a href="/faq">FAQ</a></p>
     </div>
 
     <!-- Contact Form -->
@@ -668,6 +669,22 @@
         height: 300px;
         object-fit: contain;
         margin-bottom: 1rem;
+    }
+
+    .cta-faq-link {
+        margin-top: 1.5rem;
+        font-size: 1.1rem;
+        color: var(--text-light);
+    }
+
+    .cta-faq-link a {
+        color: var(--primary-color);
+        font-weight: bold;
+        text-decoration: underline;
+    }
+
+    .cta-faq-link a:hover {
+        color: var(--primary-dark);
     }
 
     @media (max-width: 768px) {

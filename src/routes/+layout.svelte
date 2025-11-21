@@ -38,6 +38,7 @@
         </div>
         <div class="nav-links">
             <a href="/pricing">Pricing</a>
+            <a href="/faq">FAQ</a>
             {#if $authStore.loading}
                 <!-- Show nothing or a small spinner -->
             {:else if $authStore.user}
