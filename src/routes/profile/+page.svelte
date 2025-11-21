@@ -657,54 +657,56 @@
 
 <style>
     .profile-container {
-        max-width: 900px;
-        margin: 2rem auto;
-        padding: 0 2rem;
+        max-width: 1200px;
+        margin: 3rem auto;
+        padding: 0 3rem;
     }
 
     .profile-header {
         text-align: center;
-        margin-bottom: 2rem;
+        margin-bottom: 3rem;
     }
 
     .profile-header h1 {
         color: var(--primary-color);
-        font-size: 2.5rem;
-        margin-bottom: 0.5rem;
+        font-size: 3.5rem;
+        margin-bottom: 0.8rem;
     }
 
     .profile-header p {
         color: var(--text-light);
-        font-size: 1.2rem;
+        font-size: 1.7rem;
     }
 
     .loading-state {
         text-align: center;
-        padding: 3rem;
+        padding: 4rem;
         color: var(--text-light);
+        font-size: 1.5rem;
     }
 
     /* Tabs */
     .profile-tabs {
         display: flex;
-        gap: 0.5rem;
-        margin-bottom: 2rem;
+        gap: 1rem;
+        margin-bottom: 3rem;
         flex-wrap: wrap;
         justify-content: center;
     }
 
     .profile-tabs .tab-btn {
-        padding: 0.75rem 1.25rem;
-        font-size: 1rem;
+        padding: 1rem 1.8rem;
+        font-size: 1.4rem;
     }
 
     /* Status Message */
     .status-message {
-        padding: 1rem;
+        padding: 1.5rem;
         border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
         text-align: center;
-        margin-bottom: 1.5rem;
+        margin-bottom: 2rem;
         font-weight: bold;
+        font-size: 1.5rem;
     }
 
     .status-message.success {
@@ -722,7 +724,7 @@
     /* Profile Section */
     .profile-section {
         background: var(--card-background);
-        padding: 2rem;
+        padding: 3rem;
         border: 2px solid var(--border-color);
         border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
         box-shadow: var(--shadow);
@@ -730,52 +732,54 @@
 
     .profile-section h2 {
         color: var(--primary-color);
-        font-size: 1.8rem;
-        margin-bottom: 0.5rem;
+        font-size: 2.5rem;
+        margin-bottom: 0.8rem;
     }
 
     .section-description {
         color: var(--text-light);
-        margin-bottom: 1.5rem;
+        margin-bottom: 2rem;
+        font-size: 1.3rem;
     }
 
     /* Form Container */
     .form-container {
-        max-width: 750px;
+        max-width: 1000px;
     }
 
     .form-hint {
-        font-size: 0.95rem;
+        font-size: 1.3rem;
         color: var(--text-light);
-        margin-top: 0.25rem;
+        margin-top: 0.5rem;
         display: block;
     }
 
     /* Security Cards */
     .security-card {
         background: white;
-        padding: 1.5rem;
+        padding: 2.5rem;
         border: 2px solid var(--border-color);
         border-radius: 15px;
-        margin-bottom: 1.5rem;
+        margin-bottom: 2rem;
     }
 
     .security-card h3 {
         color: var(--primary-color);
-        font-size: 1.3rem;
-        margin-bottom: 0.5rem;
+        font-size: 1.8rem;
+        margin-bottom: 0.8rem;
     }
 
     .security-card p {
         color: var(--text-light);
-        margin-bottom: 1rem;
+        margin-bottom: 1.5rem;
+        font-size: 1.3rem;
     }
 
     .inline-status {
-        margin-top: 1rem;
-        padding: 0.75rem;
+        margin-top: 1.5rem;
+        padding: 1.2rem;
         border-radius: 8px;
-        font-size: 0.95rem;
+        font-size: 1.3rem;
     }
 
     .inline-status.success {
@@ -817,14 +821,14 @@
 
     .order-header h3 {
         color: var(--text-color);
-        font-size: 1.3rem;
+        font-size: 1.8rem;
         margin: 0;
     }
 
     .status-badge {
-        padding: 0.3rem 0.8rem;
+        padding: 0.5rem 1.2rem;
         border-radius: 20px;
-        font-size: 0.85rem;
+        font-size: 1.2rem;
         font-weight: bold;
         text-transform: capitalize;
     }
@@ -862,13 +866,14 @@
     }
 
     .detail-label {
-        font-size: 0.85rem;
+        font-size: 1.2rem;
         color: var(--text-light);
     }
 
     .detail-value {
         font-weight: bold;
         color: var(--text-color);
+        font-size: 1.3rem;
     }
 
     .order-actions {
@@ -880,10 +885,10 @@
         background: transparent;
         color: var(--primary-color);
         border: 2px solid var(--primary-color);
-        padding: 0.5rem 1rem;
+        padding: 0.8rem 1.5rem;
         border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
         font-family: inherit;
-        font-size: 0.9rem;
+        font-size: 1.3rem;
         font-weight: bold;
         cursor: pointer;
         text-decoration: none;
@@ -906,13 +911,13 @@
 
     .empty-state p {
         color: var(--text-light);
-        font-size: 1.2rem;
-        margin-bottom: 0.5rem;
+        font-size: 1.7rem;
+        margin-bottom: 0.8rem;
     }
 
     .empty-hint {
-        font-size: 1rem !important;
-        margin-bottom: 1.5rem !important;
+        font-size: 1.4rem !important;
+        margin-bottom: 2rem !important;
     }
 
     /* Checkbox Group */
@@ -923,9 +928,9 @@
     .checkbox-label {
         display: flex;
         align-items: flex-start;
-        gap: 1rem;
+        gap: 1.5rem;
         cursor: pointer;
-        padding: 1rem;
+        padding: 1.5rem;
         background: white;
         border: 2px solid var(--border-color);
         border-radius: 15px;
@@ -937,9 +942,9 @@
     }
 
     .checkbox-label input[type="checkbox"] {
-        width: 20px;
-        height: 20px;
-        margin-top: 0.25rem;
+        width: 28px;
+        height: 28px;
+        margin-top: 0.5rem;
         cursor: pointer;
     }
 
@@ -955,26 +960,26 @@
 
     .checkbox-text small {
         color: var(--text-light);
-        font-size: 0.9rem;
+        font-size: 1.3rem;
     }
 
     /* Responsive */
     @media (max-width: 768px) {
         .profile-container {
-            padding: 0 1rem;
+            padding: 0 1.5rem;
         }
 
         .profile-tabs {
-            gap: 0.25rem;
+            gap: 0.5rem;
         }
 
         .profile-tabs .tab-btn {
-            padding: 0.5rem 0.75rem;
-            font-size: 0.85rem;
+            padding: 0.8rem 1.2rem;
+            font-size: 1.2rem;
         }
 
         .profile-section {
-            padding: 1.5rem;
+            padding: 2rem;
         }
 
         .order-details {

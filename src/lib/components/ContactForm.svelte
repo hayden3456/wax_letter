@@ -177,29 +177,29 @@ ${formData.get('message')}`;
   }
 
   .contact-container {
-    max-width: 800px;
+    max-width: 900px;
     margin: 0 auto;
   }
 
   .contact-header {
     text-align: center;
-    margin-bottom: 3rem;
+    margin-bottom: 2rem;
   }
 
   .contact-header h2 {
-    font-size: 3rem;
+    font-size: 3.5rem;
     color: var(--primary-color);
     margin-bottom: 1rem;
   }
 
   .contact-header p {
-    font-size: 1.3rem;
+    font-size: 1.5rem;
     color: var(--text-light);
   }
 
   .contact-form {
     background: white;
-    padding: 3rem;
+    padding: 2.5rem;
     border: 2px solid var(--border-color);
     border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
     box-shadow: var(--shadow-lg);
@@ -207,11 +207,11 @@ ${formData.get('message')}`;
 
   .form-group select {
     width: 100%;
-    padding: 1rem;
+    padding: 1.1rem;
     border: 2px solid var(--border-color);
     border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
     font-family: inherit;
-    font-size: 1.1rem;
+    font-size: 1.4rem;
     transition: all 0.3s;
     background: white;
     cursor: pointer;
@@ -235,16 +235,17 @@ ${formData.get('message')}`;
     background: #ffe6e6;
     color: var(--error-color);
     border: 2px solid var(--error-color);
-    padding: 1rem;
+    padding: 1.5rem;
     border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
-    margin-bottom: 1.5rem;
+    margin-bottom: 2rem;
     font-weight: bold;
     text-align: center;
+    font-size: 1.5rem;
   }
 
   .success-message {
     background: white;
-    padding: 4rem 3rem;
+    padding: 5rem 4rem;
     border: 2px solid var(--success-color);
     border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
     box-shadow: var(--shadow-lg);

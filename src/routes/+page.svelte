@@ -595,42 +595,43 @@
     }
 
     .about-us {
-        padding: 6rem 2rem;
-        max-width: 1200px;
+        padding: 8rem 3rem;
+        max-width: 1600px;
         margin: 0 auto;
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 4rem;
+        gap: 5rem;
         align-items: center;
     }
 
     .about-content h2 {
-        font-size: 3rem;
+        font-size: 4.5rem;
         color: var(--primary-color);
-        margin-bottom: 2rem;
+        margin-bottom: 3rem;
     }
 
     .about-content p {
-        font-size: 1.3rem;
-        margin-bottom: 1.5rem;
+        font-size: 2rem;
+        margin-bottom: 2.5rem;
         color: var(--text-color);
+        line-height: 1.8;
     }
 
     .about-images {
         position: relative;
-        height: 500px;
+        height: 700px;
         width: 100%;
     }
 
     .polaroid {
         background: white;
-        padding: 1rem 1rem 3rem 1rem;
+        padding: 1.5rem 1.5rem 4.5rem 1.5rem;
         box-shadow: var(--shadow);
         text-align: center;
         transition: all 0.3s ease;
         border: 1px solid #ddd;
         position: absolute;
-        width: 280px;
+        width: 400px;
         max-width: 90%;
     }
 
@@ -642,14 +643,14 @@
     }
 
     .polaroid:nth-child(2) {
-        top: 80px;
+        top: 110px;
         left: 50%;
         transform: translateX(-50%) rotate(5deg);
         z-index: 2;
     }
 
     .polaroid:nth-child(3) {
-        top: 160px;
+        top: 220px;
         right: 0;
         transform: rotate(-6deg);
         z-index: 3;
@@ -672,7 +673,7 @@
     .polaroid span {
         font-family: 'Patrick Hand', cursive;
         color: #555;
-        font-size: 1.2rem;
+        font-size: 1.7rem;
     }
 
     .rotate-left { transform: rotate(-3deg); }

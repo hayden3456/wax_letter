@@ -203,13 +203,13 @@
     }
 
     .subtitle {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
         color: var(--text-light);
         font-style: italic;
     }
 
     .section-intro {
-        font-size: 1.3rem;
+        font-size: 1.4rem;
         color: var(--text-light);
         margin-bottom: 3rem;
         text-align: center;
@@ -266,12 +266,12 @@
 
     .step-card h3 {
         color: var(--primary-color);
-        font-size: 1.2rem;
+        font-size: 1.5rem;
         margin-bottom: 0.5rem;
     }
 
     .step-card p {
-        font-size: 1rem;
+        font-size: 1.3rem;
         color: var(--text-light);
         line-height: 1.5;
     }
@@ -321,12 +321,13 @@
 
     .update-content h4 {
         color: var(--primary-color);
-        font-size: 1.2rem;
+        font-size: 1.5rem;
         margin-bottom: 0.3rem;
     }
 
     .update-content p {
         color: var(--text-light);
+        font-size: 1.3rem;
         line-height: 1.5;
         margin: 0;
     }
@@ -365,12 +366,12 @@
 
     .faq-card h3 {
         color: var(--primary-color);
-        font-size: 1.3rem;
+        font-size: 1.5rem;
         margin-bottom: 1rem;
     }
 
     .faq-card p {
-        font-size: 1.1rem;
+        font-size: 1.3rem;
         color: var(--text-light);
         line-height: 1.6;
         margin-bottom: 0.8rem;
@@ -386,6 +387,7 @@
     }
 
     .faq-card li {
+        font-size: 1.3rem;
         margin-bottom: 0.5rem;
         line-height: 1.5;
     }
@@ -419,7 +421,7 @@
     }
 
     .faq-cta p {
-        font-size: 1.5rem;
+        font-size: 1.4rem;
         margin-bottom: 2rem;
         opacity: 0.95;
     }
@@ -442,17 +444,17 @@
         }
 
         .subtitle {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
         }
 
         .process-section h2,
         .updates-section h2,
         .faq-section h2 {
-            font-size: 2rem;
+            font-size: 2.5rem;
         }
 
         .section-intro {
-            font-size: 1.1rem;
+            font-size: 1.3rem;
         }
 
         .steps-container {

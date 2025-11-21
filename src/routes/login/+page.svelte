@@ -135,9 +135,9 @@
                         title={showPassword ? 'Hide password' : 'Show password'}
                     >
                         {#if showPassword}
-                            <span style="font-size: 1.3rem;">🙈</span>
+                            <span style="font-size: 1.8rem;">🙈</span>
                         {:else}
-                            <span style="font-size: 1.3rem;">👁️</span>
+                            <span style="font-size: 1.8rem;">👁️</span>
                         {/if}
                     </button>
                 </div>
@@ -160,17 +160,17 @@
         justify-content: center;
         align-items: center;
         min-height: 80vh;
-        padding: 2rem;
+        padding: 3rem;
     }
 
     .auth-card {
         background: var(--card-background);
-        padding: 3rem;
+        padding: 4rem;
         border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
         box-shadow: var(--shadow-lg);
         border: 2px solid var(--border-color);
         width: 100%;
-        max-width: 600px;
+        max-width: 800px;
     }
 
     .tabs {
@@ -183,9 +183,9 @@
         flex: 1;
         background: none;
         border: none;
-        padding: 1.2rem;
+        padding: 1.5rem;
         font-family: 'Patrick Hand', cursive;
-        font-size: 1.4rem;
+        font-size: 2rem;
         cursor: pointer;
         color: var(--text-light);
         transition: all 0.3s;
@@ -201,20 +201,20 @@
     h2 {
         text-align: center;
         color: var(--primary-color);
-        margin-bottom: 1.5rem;
-        font-size: 2rem;
+        margin-bottom: 2rem;
+        font-size: 2.8rem;
     }
 
     .form-group {
-        margin-bottom: 1.5rem;
+        margin-bottom: 2rem;
     }
 
     label {
         display: block;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.8rem;
         color: var(--text-color);
         font-weight: bold;
-        font-size: 1.1rem;
+        font-size: 1.5rem;
     }
 
     .password-input-wrapper {
@@ -224,29 +224,29 @@
 
     input {
         width: 100%;
-        padding: 1rem;
+        padding: 1.4rem;
         border: 2px solid var(--border-color);
         border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
         font-family: inherit;
-        font-size: 1.1rem;
+        font-size: 1.5rem;
         background: white;
         box-sizing: border-box;
     }
 
     .password-input-wrapper input {
-        padding-right: 3rem;
+        padding-right: 4rem;
     }
 
     .toggle-password {
         position: absolute;
-        right: 0.75rem;
+        right: 1rem;
         top: 50%;
         transform: translateY(-50%);
         background: none;
         border: none;
         cursor: pointer;
-        font-size: 1.5rem;
-        padding: 0.25rem;
+        font-size: 2rem;
+        padding: 0.5rem;
         display: flex;
         align-items: center;
         justify-content: center;
@@ -266,28 +266,28 @@
     .error-message {
         color: var(--primary-color);
         background: rgba(152, 41, 42, 0.1);
-        padding: 1rem;
+        padding: 1.5rem;
         border-radius: 10px;
-        margin-bottom: 1rem;
+        margin-bottom: 1.5rem;
         text-align: center;
-        font-size: 1rem;
+        font-size: 1.4rem;
     }
 
     .info-message {
         color: #0369a1;
         background: rgba(7, 89, 133, 0.1);
-        padding: 1rem;
+        padding: 1.5rem;
         border-radius: 10px;
-        margin-bottom: 1rem;
+        margin-bottom: 1.5rem;
         text-align: center;
-        font-size: 1rem;
+        font-size: 1.4rem;
         border: 1px solid rgba(7, 89, 133, 0.2);
     }
 
     .full-width {
         width: 100%;
-        margin-top: 1rem;
-        font-size: 1.2rem;
-        padding: 1rem;
+        margin-top: 1.5rem;
+        font-size: 1.7rem;
+        padding: 1.4rem;
     }
 </style>

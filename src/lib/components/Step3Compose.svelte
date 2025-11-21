@@ -343,12 +343,12 @@
     }
 
     .form-group {
-        margin-bottom: 1.5rem;
+        margin-bottom: 1.2rem;
     }
 
     .form-group label {
         display: block;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.4rem;
         font-weight: 600;
         color: var(--text-color);
         font-size: 1.1rem;
@@ -370,11 +370,11 @@
 
     .letter-input {
         width: 100%;
-        padding: 0.75rem;
+        padding: 1.2rem;
         border: 2px solid var(--border-color);
         border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
         font-family: 'Georgia', 'Times New Roman', serif;
-        font-size: 1.1rem;
+        font-size: 1.5rem;
         transition: border-color 0.3s;
     }
 
@@ -385,14 +385,14 @@
 
     .letter-textarea {
         width: 100%;
-        padding: 1rem;
+        padding: 1.4rem;
         border: 2px solid var(--border-color);
         border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
         font-family: 'Georgia', 'Times New Roman', serif;
-        font-size: 1.1rem;
+        font-size: 1.5rem;
         line-height: 1.8;
         resize: vertical;
-        min-height: 200px;
+        min-height: 280px;
         transition: border-color 0.3s;
     }
 
@@ -424,8 +424,8 @@
         background-color: var(--secondary-color);
         color: var(--text-color);
         border: 2px solid var(--border-color);
-        padding: 0.6rem 1.2rem;
-        font-size: 0.95rem;
+        padding: 0.9rem 1.7rem;
+        font-size: 1.3rem;
         font-family: inherit;
         border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
         cursor: pointer;
@@ -465,7 +465,7 @@
     }
 
     .preview-note {
-        font-size: 0.95rem;
+        font-size: 1.3rem;
         color: var(--text-light);
         margin-bottom: 1rem;
     }
@@ -474,19 +474,19 @@
         background: white;
         border: 2px solid var(--border-color);
         border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
-        padding: 2rem;
+        padding: 2.5rem;
         box-shadow: var(--shadow);
-        min-height: 400px;
+        min-height: 500px;
     }
 
     .preview-content {
         font-family: 'Georgia', 'Times New Roman', serif;
         line-height: 1.8;
-        font-size: 1.1rem;
+        font-size: 1.5rem;
     }
 
     .preview-greeting {
-        font-size: 1.2rem;
+        font-size: 1.7rem;
         margin-bottom: 1.5rem;
         font-weight: 500;
     }
@@ -494,18 +494,18 @@
     .preview-body {
         margin-bottom: 2rem;
         white-space: pre-wrap;
-        font-size: 1.1rem;
+        font-size: 1.5rem;
     }
 
     .preview-closing {
-        margin-bottom: 0.5rem;
-        font-size: 1.1rem;
+        margin-bottom: 0.8rem;
+        font-size: 1.5rem;
     }
 
     .preview-signature {
         font-weight: 600;
         font-style: italic;
-        font-size: 1.1rem;
+        font-size: 1.5rem;
     }
 
     .preview-placeholder {
