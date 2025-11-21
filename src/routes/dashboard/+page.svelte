@@ -202,6 +202,13 @@
         goto('/campaign/step/1');
     }
 
+    function startSampleLetter() {
+        // Reset the store and mark as sample
+        appState.reset();
+        appState.update(s => ({ ...s, isSample: true, name: 'Sample Letter' }));
+        goto('/sample/step/1');
+    }
+
     async function handleDeleteCampaign(event, campaignId, campaignName) {
         // Prevent the card click event from firing
         event.preventDefault();
@@ -251,7 +258,10 @@
 <div class="dashboard-container">
     <div class="dashboard-header">
         <h1>My Campaigns</h1>
-        <button onclick={startNewCampaign} class="btn-primary">Start New Campaign</button>
+        <div class="header-actions">
+            <button onclick={startSampleLetter} class="btn-secondary-outline">Get a Sample Letter</button>
+            <button onclick={startNewCampaign} class="btn-primary">Start New Campaign</button>
+        </div>
     </div>
 
     {#if loading}
@@ -261,10 +271,14 @@
         </div>
     {:else if campaigns.length === 0}
         <div class="empty-state" in:fade>
-            <div class="empty-icon">📭</div>
+            <div class="empty-icon">&#128237;</div>
             <h2>No campaigns yet</h2>
             <p>Start your first bulk mailing campaign today!</p>
-            <button onclick={startNewCampaign} class="btn-secondary">Create Campaign</button>
+            <div class="empty-actions">
+                <button onclick={startNewCampaign} class="btn-primary">Create Campaign</button>
+                <button onclick={startSampleLetter} class="btn-secondary">Try a Sample First</button>
+            </div>
+            <p class="sample-hint">New to wax seals? Order a sample letter for $15 to see our quality.</p>
         </div>
     {:else}
         <div class="campaign-grid" in:fade>
@@ -338,6 +352,29 @@
         gap: 1rem;
     }
 
+    .header-actions {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .btn-secondary-outline {
+        background: transparent;
+        color: var(--primary-color);
+        border: 2px solid var(--primary-color);
+        padding: 0.8rem 1.5rem;
+        border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    .btn-secondary-outline:hover {
+        background: var(--primary-color);
+        color: white;
+        transform: scale(1.05);
+    }
+
     h1 {
         color: var(--primary-color);
         margin: 0;
@@ -354,6 +391,37 @@
     .empty-icon {
         font-size: 4rem;
         margin-bottom: 1rem;
+    }
+
+    .btn-primary {
+        background: var(--primary-color);
+        color: white;
+        padding: 0.8rem 1.5rem;
+        border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+        font-weight: bold;
+        cursor: pointer;
+        border: none;
+        transition: all 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        transform: scale(1.05);
+        filter: brightness(0.9);
+    }
+
+    .empty-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .sample-hint {
+        font-size: 0.9rem;
+        color: var(--text-muted, #666);
+        margin-top: 1.5rem;
+        font-style: italic;
     }
 
     .spinner {

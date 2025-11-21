@@ -29,6 +29,14 @@
         goto('/campaign/step/1');
     }
 
+    function startSampleLetter() {
+        // Reset the store and mark as sample
+        appState.reset();
+        $appState.isSample = true;
+        $appState.name = 'Sample Letter';
+        goto('/sample/step/1');
+    }
+
     let isGenerating = false;
     /** @type {string | null} */
     let generatedImage = null;
@@ -338,7 +346,10 @@
         <div class="hero-content">
             <h1>Elegant Bulk Mailing<br>with <span class="highlight">Wax Sealed</span> Letters</h1>
             <p>Make every letter memorable with custom wax seals featuring your logo. We print, seal, and mail the letters for you.</p>
-            <button onclick={startNewCampaign} class="btn-primary" style="text-decoration: none;">Start Your Campaign</button>
+            <div class="hero-buttons">
+                <button onclick={startNewCampaign} class="btn-primary" style="text-decoration: none;">Start Your Campaign</button>
+                <button onclick={startSampleLetter} class="btn-secondary-outline" style="text-decoration: none;">Get a Sample Letter</button>
+            </div>
         </div>
         <div class="hero-image">
             {#if hasUploadedFile}
@@ -443,7 +454,11 @@
     <div class="cta-section">
         <h2>Ready to Make an Impression?</h2>
         <p>Start your bulk mailing campaign today with custom wax-sealed letters.</p>
-        <button onclick={startNewCampaign} class="btn-primary large" style="text-decoration: none;">Get Started Now</button>
+        <div class="cta-buttons">
+            <button onclick={startNewCampaign} class="btn-primary large" style="text-decoration: none;">Get Started Now</button>
+            <button onclick={startSampleLetter} class="btn-secondary-outline large" style="text-decoration: none;">Try a Sample First</button>
+        </div>
+        <p class="sample-note">Not sure yet? Try a sample letter for $15 to see our quality firsthand.</p>
     </div>
 
     <!-- Contact Form -->
@@ -670,6 +685,51 @@
         margin-bottom: 1rem;
     }
 
+    .hero-buttons, .cta-buttons {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+        align-items: center;
+    }
+
+    .hero-buttons {
+        justify-content: flex-start;
+    }
+
+    .cta-buttons {
+        justify-content: center;
+    }
+
+    .btn-secondary-outline {
+        background: transparent;
+        color: var(--primary-color, #8b4513);
+        border: 2px solid var(--primary-color, #8b4513);
+        padding: 0.8rem 1.5rem;
+        border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 1rem;
+    }
+
+    .btn-secondary-outline:hover {
+        background: var(--primary-color, #8b4513);
+        color: white;
+        transform: scale(1.05);
+    }
+
+    .btn-secondary-outline.large {
+        padding: 1rem 2rem;
+        font-size: 1.1rem;
+    }
+
+    .sample-note {
+        font-size: 0.9rem;
+        color: var(--text-muted, #666);
+        margin-top: 1rem;
+        font-style: italic;
+    }
+
     @media (max-width: 768px) {
         .about-us {
             grid-template-columns: 1fr;
@@ -702,10 +762,19 @@
             left: 50%;
             transform: translateX(-50%) rotate(-6deg);
         }
-        
+
         .hero {
             grid-template-columns: 1fr;
             text-align: center;
+        }
+
+        .hero-buttons {
+            justify-content: center;
+        }
+
+        .hero-buttons, .cta-buttons {
+            flex-direction: column;
+            align-items: stretch;
         }
     }
 </style>

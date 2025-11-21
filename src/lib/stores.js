@@ -16,7 +16,8 @@ const initialState = {
         closing: 'Sincerely,',
         signature: ''
     },
-    currentStep: 1
+    currentStep: 1,
+    isSample: false // Flag to indicate if this is a sample letter order
 };
 
 // Debounce timer for auto-save
