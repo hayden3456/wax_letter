@@ -314,3 +314,94 @@ export async function deleteHomepagePreviewImage(userId = null) {
     }
 }
 
+/**
+ * Get or create a session ID for step1 preview storage
+ * Uses userId if authenticated, otherwise creates a device session ID
+ * @param {string | null} userId - Optional user ID
+ * @returns {string} - Session identifier
+ */
+function getStep1SessionId(userId) {
+    if (typeof window === 'undefined') return 'anonymous';
+    
+    if (userId) {
+        return `user_${userId}`;
+    }
+    
+    // Use device session ID stored in localStorage
+    let sessionId = localStorage.getItem('step1_session_id');
+    if (!sessionId) {
+        // Generate a unique session ID
+        sessionId = `session_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
+        localStorage.setItem('step1_session_id', sessionId);
+    }
+    return sessionId;
+}
+
+/**
+ * Upload step1 generated preview image to Firebase Storage
+ * This will overwrite any existing preview for the same session/user
+ * @param {string} dataUrl - The data URL of the generated image
+ * @param {string | null} userId - Optional user ID
+ * @returns {Promise<string>} - The download URL
+ */
+export async function saveStep1PreviewImage(dataUrl, userId = null) {
+    try {
+        const sessionId = getStep1SessionId(userId);
+        const previewRef = ref(storage, `step1/preview/${sessionId}`);
+        
+        // Upload will automatically overwrite if it exists
+        await uploadString(previewRef, dataUrl, 'data_url');
+        const downloadUrl = await getDownloadURL(previewRef);
+        
+        console.log('✅ Step1 preview image saved to cloud:', downloadUrl);
+        return downloadUrl;
+    } catch (error) {
+        console.error('Error saving step1 preview image:', error);
+        throw error;
+    }
+}
+
+/**
+ * Load step1 generated preview image from Firebase Storage
+ * @param {string | null} userId - Optional user ID
+ * @returns {Promise<string | null>} - The download URL or null if not found
+ */
+export async function loadStep1PreviewImage(userId = null) {
+    try {
+        const sessionId = getStep1SessionId(userId);
+        const previewRef = ref(storage, `step1/preview/${sessionId}`);
+        
+        const downloadUrl = await getDownloadURL(previewRef);
+        console.log('✅ Step1 preview image loaded from cloud:', downloadUrl);
+        return downloadUrl;
+    } catch (error) {
+        // Image might not exist, that's okay
+        if (error.code === 'storage/object-not-found') {
+            return null;
+        }
+        console.error('Error loading step1 preview image:', error);
+        return null;
+    }
+}
+
+/**
+ * Delete step1 preview image from Firebase Storage
+ * @param {string | null} userId - Optional user ID
+ * @returns {Promise<void>}
+ */
+export async function deleteStep1PreviewImage(userId = null) {
+    try {
+        const sessionId = getStep1SessionId(userId);
+        const previewRef = ref(storage, `step1/preview/${sessionId}`);
+        await deleteObject(previewRef);
+        console.log('✅ Step1 preview image deleted from cloud');
+    } catch (error) {
+        // Image might not exist, that's okay
+        if (error.code === 'storage/object-not-found') {
+            return;
+        }
+        console.error('Error deleting step1 preview image:', error);
+        throw error;
+    }
+}
+

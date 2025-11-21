@@ -23,6 +23,10 @@ const initialState = {
 let saveTimeout;
 const SAVE_DELAY = 2000; // 2 seconds
 
+// Flag to prevent auto-save during initial load
+let isInitialLoad = true;
+let initialLoadTimeout;
+
 // Create store
 const createWaxSealStore = () => {
     const { subscribe, set, update } = writable(initialState);
@@ -81,6 +85,10 @@ const createWaxSealStore = () => {
         loadFromFirestore: async (campaignId) => {
             if (!browser || !campaignId) return;
             
+            // Prevent auto-save during load
+            isInitialLoad = true;
+            clearTimeout(initialLoadTimeout);
+            
             try {
                 const campaign = await getCampaign(campaignId);
                 if (campaign) {
@@ -93,6 +101,11 @@ const createWaxSealStore = () => {
                 if (import.meta.env.DEV) {
                     console.warn('⚠️ Firestore load failed (using localStorage only):', error.message);
                 }
+            } finally {
+                // Re-enable auto-save after a delay
+                initialLoadTimeout = setTimeout(() => {
+                    isInitialLoad = false;
+                }, 3000);
             }
         }
     };
@@ -123,6 +136,11 @@ if (browser) {
         appState.loadFromFirestore(savedCampaignId).catch(err => {
             console.error('Failed to load from Firestore on init:', err);
         });
+    } else {
+        // No saved campaign, so allow auto-save immediately
+        setTimeout(() => {
+            isInitialLoad = false;
+        }, 1000);
     }
 
     // Initialize userId from authStore if user is already signed in
@@ -151,6 +169,12 @@ if (browser) {
         // Debounced save to Firestore (slower, asynchronous)
         clearTimeout(saveTimeout);
         saveTimeout = setTimeout(() => {
+            // Don't auto-save during initial load
+            if (isInitialLoad) {
+                console.log('⏭️ Skipping auto-save: initial load in progress');
+                return;
+            }
+            
             // Only save to Firestore if there's actual content
             const hasContent = value.campaignId || // Already has an ID (existing campaign)
                                value.stampImage || // Has uploaded stamp

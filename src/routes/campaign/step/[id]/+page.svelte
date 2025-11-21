@@ -36,6 +36,10 @@
             if (editCampaignId) {
                 if (editCampaignId !== $appState.campaignId) {
                     console.log('Loading campaign for editing:', editCampaignId);
+                    // Clear localStorage first to prevent auto-save of stale data
+                    localStorage.removeItem('waxseal_state');
+                    localStorage.removeItem('waxseal_campaignId');
+                    // Then load the new campaign
                     await appState.loadFromFirestore(editCampaignId);
                 } else {
                     console.log('Already viewing this campaign:', editCampaignId);

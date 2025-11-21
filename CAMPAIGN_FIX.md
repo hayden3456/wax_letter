@@ -5,8 +5,10 @@
 ### 1. New Campaign Editing Old Campaign
 When users clicked "Start New Campaign", the application was editing the old campaign instead of creating a new one. This was due to persistent data in localStorage that wasn't being cleared.
 
-### 2. Mysterious "Untitled Campaigns" Appearing
+### 2. Mysterious "Untitled Campaigns" Appearing (FIXED AGAIN - Nov 2024)
 When clicking between campaigns, blank "Untitled Campaign" entries were being created. This was caused by auto-save triggering before campaign data was loaded.
+
+**Latest Fix**: The issue was that when navigating between campaigns, old campaign data persisted in localStorage. Before the new campaign could load from Firestore, the auto-save would trigger with stale data, creating duplicate untitled campaigns.
 
 ## Root Cause
 1. The `appState` store in `src/lib/stores.js` automatically loads campaign data from localStorage on initialization (lines 104-126)
@@ -20,6 +22,7 @@ The fix was implemented in multiple places:
 - Added logic to detect when starting a NEW campaign (no `edit` parameter in URL)
 - Automatically calls `appState.reset()` when no campaign is being edited
 - This ensures a fresh state for new campaigns
+- **NEW**: Clear localStorage before loading a different campaign to prevent auto-save of stale data
 
 ### 2. Dashboard (`src/routes/dashboard/+page.svelte`)
 - Changed "Start New Campaign" button from a link to a button with click handler
@@ -125,6 +128,35 @@ Fixed `createdAt?.toDate is not a function` errors:
 - Graceful error handling prevents crashes
 - Better date formatting with error recovery
 
+## Latest Fix (November 2024) - Campaign Navigation Issue
+
+### Problem
+When navigating between campaigns, random "untitled campaigns" would appear, and exiting one would cause all to disappear.
+
+### Root Cause
+1. When clicking a campaign card in the dashboard, the URL changes to `/campaign/step/1?edit=campaignB`
+2. The store already had Campaign A's data in localStorage from the previous visit
+3. Before Campaign B could load from Firestore, the auto-save timer would trigger
+4. This saved Campaign A's stale data with Campaign B's ID, creating duplicate untitled campaigns
+
+### Solution Applied
+
+**1. Store Changes (`src/lib/stores.js`)**
+- Added `isInitialLoad` flag to prevent auto-save during campaign loading
+- Modified `loadFromFirestore()` to set `isInitialLoad = true` during load
+- Auto-save now checks this flag and skips if loading is in progress
+- Flag is cleared after 3 seconds to allow normal auto-save to resume
+
+**2. Page Changes (`src/routes/campaign/step/[id]/+page.svelte`)**
+- Clear localStorage before loading a new campaign
+- This prevents stale data from triggering auto-save
+- Only clears when switching to a DIFFERENT campaign ID
+
+**Why This Works**
+- Prevents the race condition between localStorage data and Firestore loading
+- Auto-save won't trigger on stale data during the critical loading period
+- Each campaign switch starts with a clean slate
+
 ## Additional Notes
 - The fix maintains backward compatibility with the `edit` flow
 - LocalStorage is properly cleared to prevent any caching issues
@@ -133,4 +165,5 @@ Fixed `createdAt?.toDate is not a function` errors:
 - Server-side rendering is now properly handled with browser checks
 - Dashboard now shows all campaigns (yours + unclaimed ones)
 - Date handling is robust across different Firebase data formats
+- **NEW**: Campaign navigation between different campaigns no longer creates duplicates
 

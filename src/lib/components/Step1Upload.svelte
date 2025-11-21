@@ -1,6 +1,11 @@
 <script>
     import { appState } from '$lib/stores';
+    import { authStore } from '$lib/stores/authStore';
     import { createEventDispatcher } from 'svelte';
+    import { onMount } from 'svelte';
+    import { browser } from '$app/environment';
+    import { get } from 'svelte/store';
+    import { saveStep1PreviewImage, loadStep1PreviewImage, deleteStep1PreviewImage } from '$lib/firestoreService';
 
     const dispatch = createEventDispatcher();
 
@@ -89,6 +94,17 @@
             return;
         }
 
+        // Delete old preview image from cloud before generating new one
+        try {
+            const $auth = get(authStore);
+            const userId = $auth.user?.uid || null;
+            await deleteStep1PreviewImage(userId).catch(() => {
+                // Ignore errors - image might not exist
+            });
+        } catch (e) {
+            // Ignore errors
+        }
+
         isGenerating = true;
         startLoadingAnimation();
 
@@ -111,12 +127,22 @@
 
             const response = await fetch('/api/generate-seal', {
                 method: 'POST',
-                body: formData
+                body: formData,
+                keepalive: true // Help continue even if user navigates away
             });
 
             if (response.ok) {
                 const data = await response.json();
                 generatedImage = data.image;
+                
+                // Save to Firebase async (non-blocking, continues even if user leaves)
+                if (generatedImage && browser) {
+                    const $auth = get(authStore);
+                    const userId = $auth.user?.uid || null;
+                    saveStep1PreviewImage(generatedImage, userId).catch(err => {
+                        console.warn('Failed to save preview to cloud (image still displayed):', err);
+                    });
+                }
             } else {
                 console.error('Failed to generate seal preview');
             }
@@ -127,6 +153,26 @@
             stopLoadingAnimation();
         }
     }
+
+    // Load saved preview image from Firebase on mount
+    onMount(async () => {
+        if (!browser) return;
+        
+        // Only load if we have a stamp image but no generated image yet
+        if ($appState.stampImage && !generatedImage) {
+            try {
+                const $auth = get(authStore);
+                const userId = $auth.user?.uid || null;
+                const cloudImage = await loadStep1PreviewImage(userId);
+                if (cloudImage) {
+                    generatedImage = cloudImage;
+                    console.log('✅ Loaded Step1 preview image from Firebase');
+                }
+            } catch (e) {
+                console.warn('Failed to load preview from cloud:', e);
+            }
+        }
+    });
 </script>
 
 <div class="step-container">

@@ -23,6 +23,17 @@ service firebase.storage {
       // allow read: if request.auth != null;
       // allow write: if request.auth != null;
     }
+    
+    // Step1 preview images
+    match /step1/preview/{sessionId} {
+      // For now, allow anyone to read and write
+      // In production, you should add authentication and proper rules
+      allow read, write: if true;
+      
+      // Example with authentication (uncomment when you add Firebase Auth):
+      // allow read: if request.auth != null;
+      // allow write: if request.auth != null;
+    }
   }
 }
 
