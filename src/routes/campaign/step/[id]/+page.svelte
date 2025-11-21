@@ -89,7 +89,7 @@
 </script>
 
 <svelte:head>
-    <title>Step {currentStep} - Start Campaign - WaxSeal Mail</title>
+    <title>Step {currentStep} - Start Campaign - Wax Letter</title>
 </svelte:head>
 
 <ProgressBar {currentStep} />

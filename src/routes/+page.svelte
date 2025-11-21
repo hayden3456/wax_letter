@@ -379,7 +379,7 @@
     </div>
 
     <div class="features">
-        <h2>Why Choose WaxSeal Mail?</h2>
+        <h2>Why Choose Wax Letter?</h2>
         <div class="feature-grid">
             <div class="feature-card">
                 <div class="feature-icon">✦</div>
