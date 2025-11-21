@@ -1,0 +1,12 @@
+# Copy this file to .env in your project root and fill in your actual keys
+
+# Stripe API Keys (Test Mode)
+# Get these from: https://dashboard.stripe.com/test/apikeys
+VITE_STRIPE_PUBLISHABLE_KEY=pk_test_YOUR_PUBLISHABLE_KEY_HERE
+STRIPE_SECRET_KEY=sk_test_YOUR_SECRET_KEY_HERE
+
+# For testing, you can use test cards:
+# Card: 4242 4242 4242 4242
+# Expiry: Any future date
+# CVC: Any 3 digits
+
