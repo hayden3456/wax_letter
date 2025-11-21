@@ -33,14 +33,25 @@
             const params = new URLSearchParams(window.location.search);
             const editCampaignId = params.get('edit');
             
-            if (editCampaignId && editCampaignId !== $appState.campaignId) {
-                console.log('Loading campaign for editing:', editCampaignId);
-                await appState.loadFromFirestore(editCampaignId);
+            if (editCampaignId) {
+                if (editCampaignId !== $appState.campaignId) {
+                    console.log('Loading campaign for editing:', editCampaignId);
+                    await appState.loadFromFirestore(editCampaignId);
+                } else {
+                    console.log('Already viewing this campaign:', editCampaignId);
+                }
+            } else if (!editCampaignId && $appState.campaignId) {
+                // No edit parameter but we have a campaignId means we're starting a NEW campaign
+                // Reset the state to start fresh
+                console.log('Starting new campaign - resetting state');
+                appState.reset();
             }
         }
         
-        // Sync currentStep with appState
-        $appState.currentStep = currentStep;
+        // Sync currentStep with appState (only if it's different to avoid unnecessary updates)
+        if ($appState.currentStep !== currentStep) {
+            $appState.currentStep = currentStep;
+        }
     });
 
     // Update appState when step changes

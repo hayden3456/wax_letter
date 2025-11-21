@@ -46,7 +46,7 @@ export async function POST({ request }) {
         const genAI = new GoogleGenerativeAI(GOOGLE_API_KEY);
         const model = genAI.getGenerativeModel({ model: "gemini-3-pro-image-preview" });
 
-        const prompt = "Using the provided images, place the logo image onto the wax seal of the letter image. CRITICAL: The rest of the letter MUST remain exactly the same pixel-for-pixel. Do not change the lighting, background, dimensions, or paper texture. Only replace the imprinted design on the wax seal. Keep the wax seal color exactly as the original. The output must be hyper-realistic";
+        const prompt = "Using the provided images, make the logo given be indented into the wax seal on the letter image. Show the whole letter with the wax seal and the wax seal is the same color single color as the original. CRITICAL: The rest of the letter MUST remain exactly the same pixel-for-pixel. Do not change the lighting, background, dimensions, or paper texture. Only replace the imprinted design on the wax seal. Keep the wax seal color exactly as the original. The output must be hyper-realistic";
 
         const result = await model.generateContent([
             prompt,

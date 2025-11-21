@@ -1,16 +1,19 @@
 <script>
     import { authStore } from '$lib/stores/authStore';
+    import { appState } from '$lib/stores';
     import { db } from '$lib/firebase';
     import { collection, query, where, getDocs, orderBy } from 'firebase/firestore';
+    import { deleteCampaign } from '$lib/firestoreService';
     import { onMount } from 'svelte';
     import { goto } from '$app/navigation';
     import { fade } from 'svelte/transition';
+    import { browser } from '$app/environment';
 
     let campaigns = [];
     let loading = true;
 
-    // Protect route
-    $: if (!$authStore.loading && !$authStore.user) {
+    // Protect route (only on client side)
+    $: if (browser && !$authStore.loading && !$authStore.user) {
         goto('/login');
     }
 
@@ -74,12 +77,40 @@
             day: 'numeric'
         }).format(date);
     }
+
+    function startNewCampaign() {
+        // Reset the store to clear any existing campaign data
+        appState.reset();
+        goto('/campaign/step/1');
+    }
+
+    async function handleDeleteCampaign(event, campaignId, campaignName) {
+        // Prevent the card click event from firing
+        event.preventDefault();
+        event.stopPropagation();
+        
+        const confirmMsg = campaignName 
+            ? `Delete "${campaignName}"?` 
+            : 'Delete this campaign?';
+        
+        if (confirm(confirmMsg)) {
+            try {
+                await deleteCampaign(campaignId);
+                // Remove from local array
+                campaigns = campaigns.filter(c => c.id !== campaignId);
+                console.log('✅ Campaign deleted:', campaignId);
+            } catch (error) {
+                console.error('Failed to delete campaign:', error);
+                alert('Failed to delete campaign. Please try again.');
+            }
+        }
+    }
 </script>
 
 <div class="dashboard-container">
     <div class="dashboard-header">
         <h1>My Campaigns</h1>
-        <a href="/campaign/step/1" class="btn-primary">Start New Campaign</a>
+        <button onclick={startNewCampaign} class="btn-primary">Start New Campaign</button>
     </div>
 
     {#if loading}
@@ -92,13 +123,20 @@
             <div class="empty-icon">📭</div>
             <h2>No campaigns yet</h2>
             <p>Start your first bulk mailing campaign today!</p>
-            <a href="/campaign/step/1" class="btn-secondary">Create Campaign</a>
+            <button onclick={startNewCampaign} class="btn-secondary">Create Campaign</button>
         </div>
     {:else}
         <div class="campaign-grid" in:fade>
             {#each campaigns as campaign}
                 <a href="/campaign/step/1?edit={campaign.id}" class="campaign-card-link">
                     <div class="campaign-card">
+                        <button 
+                            class="delete-btn" 
+                            onclick={(e) => handleDeleteCampaign(e, campaign.id, campaign.name)}
+                            title="Delete campaign"
+                        >
+                            ✕
+                        </button>
                         <div class="campaign-status {campaign.status || 'draft'}">
                             {campaign.status || 'Draft'}
                         </div>
@@ -224,6 +262,36 @@
     .campaign-status.draft { background: #eee; color: #666; }
     .campaign-status.pending { background: var(--secondary-color); color: #fff; }
     .campaign-status.completed { background: var(--accent-color); color: #fff; }
+
+    .delete-btn {
+        position: absolute;
+        top: 0.5rem;
+        left: 0.5rem;
+        background: #ff4444;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 28px;
+        height: 28px;
+        font-size: 16px;
+        line-height: 1;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        transition: opacity 0.2s, transform 0.2s;
+        z-index: 10;
+    }
+
+    .campaign-card:hover .delete-btn {
+        opacity: 1;
+    }
+
+    .delete-btn:hover {
+        background: #cc0000;
+        transform: scale(1.1);
+    }
 
     h3 {
         margin: 1.5rem 0 1rem;

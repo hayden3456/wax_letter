@@ -151,6 +151,19 @@ if (browser) {
         // Debounced save to Firestore (slower, asynchronous)
         clearTimeout(saveTimeout);
         saveTimeout = setTimeout(() => {
+            // Only save to Firestore if there's actual content
+            const hasContent = value.campaignId || // Already has an ID (existing campaign)
+                               value.stampImage || // Has uploaded stamp
+                               value.addresses?.length > 0 || // Has addresses
+                               value.letter?.body?.trim() || // Has letter content
+                               value.letter?.signature?.trim() || // Has signature
+                               value.name?.trim(); // Has campaign name
+            
+            if (!hasContent) {
+                console.log('⏭️ Skipping auto-save: no content to save yet');
+                return;
+            }
+            
             // Get current user ID from authStore if available
             let currentUserId = value.userId;
             const $auth = get(authStore);

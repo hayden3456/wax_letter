@@ -4,6 +4,8 @@
 
 <script>
     import { fade } from 'svelte/transition';
+    import { goto } from '$app/navigation';
+    import { appState } from '$lib/stores';
     import ContactForm from '$lib/components/ContactForm.svelte';
 
     let fileInput;
@@ -11,6 +13,12 @@
 
     function handleImageClick() {
         fileInput.click();
+    }
+
+    function startNewCampaign() {
+        // Reset the store to clear any existing campaign data
+        appState.reset();
+        goto('/campaign/step/1');
     }
 
     let isGenerating = false;
@@ -117,12 +125,12 @@
         <div class="hero-content">
             <h1>Elegant Bulk Mailing<br>with <span class="highlight">Wax Sealed</span> Letters</h1>
             <p>Make every letter memorable with custom wax seals featuring your logo. We print, seal, and mail the letters for you.</p>
-            <a href="/campaign/step/1" class="btn-primary" style="text-decoration: none;">Start Your Campaign</a>
+            <button onclick={startNewCampaign} class="btn-primary" style="text-decoration: none;">Start Your Campaign</button>
         </div>
         <div class="hero-image">
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <!-- svelte-ignore a11y-no-static-element-interactions -->
-            <div class="real-image-container" on:click={handleImageClick}>
+            <div class="real-image-container" onclick={handleImageClick}>
                 {#if generatedImage}
                     <img src={generatedImage} alt="Wax Sealed Letter with Custom Logo" class="hero-img generated">
                 {:else}
@@ -144,7 +152,7 @@
                 type="file" 
                 accept="image/*,image/svg+xml" 
                 bind:this={fileInput} 
-                on:change={handleFileUpload} 
+                onchange={handleFileUpload} 
                 style="display: none;"
             >
             {#if generatedImage}
@@ -218,7 +226,7 @@
     <div class="cta-section">
         <h2>Ready to Make an Impression?</h2>
         <p>Start your bulk mailing campaign today with custom wax-sealed letters.</p>
-        <a href="/campaign/step/1" class="btn-primary large" style="text-decoration: none;">Get Started Now</a>
+        <button onclick={startNewCampaign} class="btn-primary large" style="text-decoration: none;">Get Started Now</button>
     </div>
 
     <!-- Contact Form -->

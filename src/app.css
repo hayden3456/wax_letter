@@ -91,6 +91,9 @@ body {
 }
 
 .nav-brand a {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     text-decoration: none;
     color: var(--primary-color);
     transition: color 0.3s;
@@ -98,6 +101,12 @@ body {
 
 .nav-brand a:hover {
     color: var(--primary-dark);
+}
+
+.logo-img {
+    height: 40px;
+    width: auto;
+    object-fit: contain;
 }
 
 .logo-icon {
@@ -517,6 +526,13 @@ body {
     margin: 0 auto;
 }
 
+@media (max-width: 768px) {
+    .feature-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+}
+
 .feature-card {
     padding: 2.5rem;
     background: white;
@@ -557,6 +573,13 @@ body {
     gap: 3rem;
     max-width: 1200px;
     margin: 0 auto;
+}
+
+@media (max-width: 768px) {
+    .showcase-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
 }
 
 .showcase-item {
