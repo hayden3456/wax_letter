@@ -55,5 +55,59 @@
 {@render children()}
 
 <footer class="footer">
-    <p>&copy; 2025 Wax Letter All rights reserved.</p>
+    <div class="footer-content">
+        <p>&copy; 2025 Wax Letter. All rights reserved.</p>
+        <div class="footer-links">
+            <a href="/privacy">Privacy Policy</a>
+            <span class="separator">|</span>
+            <a href="/terms">Terms of Service</a>
+            <span class="separator">|</span>
+            <a href="/#contact">Contact</a>
+        </div>
+    </div>
 </footer>
+
+<style>
+    .footer-content {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .footer-links {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .footer-links a {
+        color: var(--text-light);
+        text-decoration: none;
+        font-size: 0.9rem;
+        transition: color 0.2s;
+    }
+
+    .footer-links a:hover {
+        color: var(--primary-color);
+        text-decoration: underline;
+    }
+
+    .footer-links .separator {
+        color: var(--border-color);
+        font-size: 0.8rem;
+    }
+
+    @media (max-width: 480px) {
+        .footer-links {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .footer-links .separator {
+            display: none;
+        }
+    }
+</style>
