@@ -710,6 +710,19 @@ body {
     margin-top: 1rem;
 }
 
+.sample-download {
+    font-size: 0.9rem;
+    color: var(--primary-color);
+    margin-top: 0.75rem;
+    text-decoration: underline;
+    cursor: pointer;
+    transition: opacity 0.2s ease;
+}
+
+.sample-download:hover {
+    opacity: 0.8;
+}
+
 /* Preview Section */
 .preview-section {
     margin-top: 3rem;

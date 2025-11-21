@@ -302,6 +302,25 @@
         validationMessage = msg;
         validationType = 'success';
     }
+
+    function downloadSampleCSV() {
+        const sampleData = `First Name,Last Name,Street,City,State,ZIP
+John,Smith,123 Main Street,New York,NY,10001
+Jane,Doe,456 Oak Avenue,Los Angeles,CA,90210
+Robert,Johnson,789 Pine Boulevard,Chicago,IL,60601
+Emily,Williams,321 Maple Drive,Houston,TX,77001
+Michael,Brown,654 Cedar Lane,Phoenix,AZ,85001`;
+
+        const blob = new Blob([sampleData], { type: 'text/csv' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'sample-addresses.csv';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    }
 </script>
 
 <div class="step-container">
@@ -326,11 +345,14 @@
             <div class="upload-icon">📄</div>
             <p>Drag & drop your CSV file here or click to browse</p>
             <p class="upload-hint">CSV must include: Name (or First/Last Name) and Address fields</p>
-            <input 
-                type="file" 
-                bind:this={csvInput} 
-                accept=".csv" 
-                hidden 
+            <!-- svelte-ignore a11y-click-events-have-key-events -->
+            <!-- svelte-ignore a11y-no-static-element-interactions -->
+            <p class="sample-download" on:click|stopPropagation={downloadSampleCSV}>Download sample CSV</p>
+            <input
+                type="file"
+                bind:this={csvInput}
+                accept=".csv"
+                hidden
                 on:change={(e) => handleCSVUpload(e.target.files[0])}
             >
         </div>
