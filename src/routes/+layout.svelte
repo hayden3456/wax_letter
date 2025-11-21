@@ -87,7 +87,7 @@
     .footer-links a {
         color: var(--text-light);
         text-decoration: none;
-        font-size: 0.9rem;
+        font-size: 1rem;
         transition: color 0.2s;
     }
 
@@ -98,7 +98,7 @@
 
     .footer-links .separator {
         color: var(--border-color);
-        font-size: 0.8rem;
+        font-size: 0.9rem;
     }
 
     @media (max-width: 480px) {

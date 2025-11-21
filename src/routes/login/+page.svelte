@@ -170,7 +170,7 @@
         box-shadow: var(--shadow-lg);
         border: 2px solid var(--border-color);
         width: 100%;
-        max-width: 500px;
+        max-width: 600px;
     }
 
     .tabs {

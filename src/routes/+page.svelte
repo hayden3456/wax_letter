@@ -472,7 +472,7 @@
         justify-content: center;
         align-items: center;
         width: 100%;
-        max-width: 600px; /* Increased for larger letter image */
+        max-width: 750px; /* Increased for larger letter image */
         max-height: 800px; /* Increased for larger letter image */
         margin: 0 auto;
         cursor: pointer;
@@ -586,7 +586,7 @@
     .ai-disclaimer {
         text-align: center;
         color: var(--text-muted);
-        font-size: 0.9rem;
+        font-size: 1rem;
         font-style: italic;
         margin-top: 1rem;
         padding: 0.5rem;
