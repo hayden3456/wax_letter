@@ -47,7 +47,7 @@
 </script>
 
 <svelte:head>
-    <title>Payment Successful - WaxSeal Mail</title>
+    <title>Payment Successful - Wax Letter</title>
 </svelte:head>
 
 <div class="success-container">

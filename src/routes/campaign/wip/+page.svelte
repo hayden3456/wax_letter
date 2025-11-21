@@ -3,7 +3,7 @@
 </script>
 
 <svelte:head>
-    <title>Campaign in Progress - WaxSeal Mail</title>
+    <title>Campaign in Progress - Wax Letter</title>
 </svelte:head>
 
 <section class="screen active" id="wip">

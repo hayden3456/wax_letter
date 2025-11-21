@@ -60,7 +60,7 @@
 </script>
 
 <svelte:head>
-    <title>Payment - WaxSeal Mail</title>
+    <title>Payment - Wax Letter</title>
 </svelte:head>
 
 <div class="payment-container">

@@ -11,7 +11,7 @@
 </script>
 
 <svelte:head>
-    <title>Start Campaign - WaxSeal Mail</title>
+    <title>Start Campaign - Wax Letter</title>
 </svelte:head>
 
 <div class="loading-container">
