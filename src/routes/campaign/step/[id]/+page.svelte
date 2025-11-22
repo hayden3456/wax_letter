@@ -4,6 +4,7 @@
     import { appState } from '$lib/stores';
     import { onMount } from 'svelte';
     import { browser } from '$app/environment';
+    import { authStore } from '$lib/stores/authStore';
     import ProgressBar from '$lib/components/ProgressBar.svelte';
     import Step1Upload from '$lib/components/Step1Upload.svelte';
     import Step2Addresses from '$lib/components/Step2Addresses.svelte';
@@ -134,6 +135,12 @@
     </div>
 {/if}
 
+{#if !$authStore.user && !$authStore.loading && currentStep !== 4}
+    <div class="sign-in-message">
+        <a href="/login">Sign In To Save Progress</a>
+    </div>
+{/if}
+
 <style>
     .loading-container, .error-container {
         max-width: 800px;
@@ -145,6 +152,33 @@
     .error-container h2 {
         color: var(--error-color);
         margin-bottom: 1rem;
+    }
+
+    .sign-in-message {
+        position: fixed;
+        bottom: 2rem;
+        left: 50%;
+        transform: translateX(-50%);
+        text-align: center;
+        z-index: 100;
+    }
+
+    .sign-in-message a {
+        display: inline-block;
+        padding: 0.75rem 1.5rem;
+        background-color: var(--primary-color);
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        box-shadow: var(--shadow);
+        transition: all 0.3s ease;
+    }
+
+    .sign-in-message a:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
     }
 </style>
 

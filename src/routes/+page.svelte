@@ -174,11 +174,17 @@
 
             if (apiResponse.ok) {
                 const data = await apiResponse.json();
-                generatedImage = data.image;
-                hasUploadedFile = true;
-                await saveState(); // Save to both local and cloud
+                if (data.image) {
+                    generatedImage = data.image;
+                    hasUploadedFile = true;
+                    await saveState(); // Save to both local and cloud
+                } else {
+                    console.error('No image in response:', data);
+                    localStorage.removeItem(STORAGE_KEYS.IS_GENERATING);
+                }
             } else {
-                console.error('Failed to generate seal');
+                const errorData = await apiResponse.json().catch(() => ({ error: 'Unknown error' }));
+                console.error('Failed to generate seal:', apiResponse.status, errorData);
                 localStorage.removeItem(STORAGE_KEYS.IS_GENERATING);
             }
         } catch (error) {
@@ -280,17 +286,26 @@
 
             if (response.ok) {
                 const data = await response.json();
-                generatedImage = data.image;
-                hasUploadedFile = true;
-                await saveState(); // Save to both local and cloud
+                if (data.image) {
+                    generatedImage = data.image;
+                    hasUploadedFile = true;
+                    await saveState(); // Save to both local and cloud
+                } else {
+                    console.error('No image in response:', data);
+                    const errorMsg = data.error || 'Failed to generate image';
+                    alert(`Error: ${errorMsg}`);
+                }
             } else {
-                console.error('Failed to generate seal');
+                const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+                console.error('Failed to generate seal:', response.status, errorData);
+                alert(`Error generating image: ${errorData.error || 'Server error'}`);
                 if (browser) {
                     localStorage.removeItem(STORAGE_KEYS.IS_GENERATING);
                 }
             }
         } catch (error) {
             console.error('Error generating image:', error);
+            alert(`Error: ${error instanceof Error ? error.message : 'Failed to generate image. Please try again.'}`);
             if (browser) {
                 localStorage.removeItem(STORAGE_KEYS.IS_GENERATING);
             }
@@ -347,15 +362,11 @@
             <h1>Elegant Bulk Mailing<br>with <span class="highlight">Wax Sealed</span> Letters</h1>
             <p>Make every letter memorable with custom wax seals featuring your logo. We print, seal, and mail the letters for you.</p>
             <div class="hero-buttons">
-                <button onclick={startNewCampaign} class="btn-primary" style="text-decoration: none;">Start Your Campaign</button>
-                <button onclick={startSampleLetter} class="btn-secondary-outline" style="text-decoration: none;">Get a Sample Letter</button>
+                <button onclick={startNewCampaign} class="btn-primary" style="text-decoration: none;">Create Your Mail</button>
             </div>
         </div>
         <div class="hero-image">
-            {#if hasUploadedFile}
-                <h3 class="preview-heading">How it looks on your letter:</h3>
-                <p class="preview-subheading">Wax Sealed Letter</p>
-            {/if}
+
             <!-- svelte-ignore a11y-click-events-have-key-events -->
             <!-- svelte-ignore a11y-no-static-element-interactions -->
             <div class="real-image-container" onclick={handleImageClick}>
@@ -453,12 +464,10 @@
 
     <div class="cta-section">
         <h2>Ready to Make an Impression?</h2>
-        <p>Start your bulk mailing campaign today with custom wax-sealed letters.</p>
+        <p>Start your bulk mailing today with custom wax-sealed letters.</p>
         <div class="cta-buttons">
-            <button onclick={startNewCampaign} class="btn-primary large" style="text-decoration: none;">Get Started Now</button>
-            <button onclick={startSampleLetter} class="btn-secondary-outline large" style="background: white; text-decoration: none;">Try a Sample First</button>
+            <button onclick={startNewCampaign} class="btn-primary large" style="text-decoration: none;">Create Your Mail</button>
         </div>
-        <p class="sample-note" style="font-size: 1.3rem; color: white; background: none;">Not sure yet? Try a sample letter for $15 to see our quality firsthand.</p>
     </div>
 
     <!-- Contact Form -->
@@ -500,7 +509,7 @@
     }
 
     .preview-heading {
-        font-size: 1.2rem;
+        font-size: 1.4rem;
         color: var(--primary-color);
         margin-bottom: 0.4rem;
         text-align: center;
@@ -508,7 +517,7 @@
     }
 
     .preview-subheading {
-        font-size: 1rem;
+        font-size: 1.4rem;
         color: var(--text-color);
         margin-bottom: 1rem;
         text-align: center;
@@ -586,7 +595,7 @@
     .ai-disclaimer {
         text-align: center;
         color: var(--text-muted);
-        font-size: 1rem;
+        font-size: 1.4rem;
         font-style: italic;
         margin-top: 1rem;
         padding: 0.5rem;
@@ -710,7 +719,7 @@
         font-weight: bold;
         cursor: pointer;
         transition: all 0.3s ease;
-        font-size: 1.3rem;
+        font-size: 1.4rem;
         font-family: inherit;
     }
 
@@ -726,7 +735,7 @@
     }
 
     .sample-note {
-        font-size: 0.9rem;
+        font-size: 1.4rem;
         color: var(--text-muted, #666);
         margin-top: 1rem;
         font-style: italic;

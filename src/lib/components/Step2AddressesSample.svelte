@@ -160,7 +160,7 @@
         border-radius: 8px;
         padding: 1rem;
         margin-bottom: 2rem;
-        font-size: 1rem;
+        font-size: 1.4rem;
         color: #0066cc;
     }
 
@@ -174,7 +174,7 @@
         align-items: center;
         justify-content: center;
         font-weight: bold;
-        font-size: 0.75rem;
+        font-size: 1.4rem;
         flex-shrink: 0;
     }
 
@@ -205,14 +205,14 @@
         font-weight: 600;
         margin-bottom: 0.5rem;
         color: var(--text-color);
-        font-size: 1rem;
+        font-size: 1.4rem;
     }
 
     input {
         padding: 0.75rem;
         border: 2px solid #e0e0e0;
         border-radius: 8px;
-        font-size: 1rem;
+        font-size: 1.4rem;
         transition: border-color 0.3s;
     }
 
@@ -250,7 +250,7 @@
     .btn-primary, .btn-secondary {
         padding: 0.75rem 1.5rem;
         border-radius: 8px;
-        font-size: 1rem;
+        font-size: 1.4rem;
         cursor: pointer;
         border: none;
         transition: all 0.3s ease;

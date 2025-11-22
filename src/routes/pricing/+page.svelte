@@ -111,7 +111,7 @@
         <div class="offer-card bulk">
             <div class="offer-badge">💼 Bulk Orders</div>
             <h3>Sending 500+ Letters?</h3>
-            <p>We offer special bulk pricing for large campaigns. Whether you're running a major marketing campaign, sending wedding invitations, or conducting outreach at scale, let's talk about how we can make it work for your budget.</p>
+            <p>We offer special bulk pricing for large mailings. Whether you're running a major marketing mailing, sending wedding invitations, or conducting outreach at scale, let's talk about how we can make it work for your budget.</p>
             <a href="/#contact" class="btn-primary">Get Bulk Pricing</a>
         </div>
         
@@ -126,8 +126,8 @@
     <!-- CTA Section -->
     <div class="pricing-cta">
         <h2>Ready to Make an Impression?</h2>
-        <p>Start your campaign today and give your recipients something they'll actually want to open.</p>
-        <a href="/campaign/step/1" class="btn-primary large">Start Your Campaign</a>
+        <p>Start your mail today and give your recipients something they'll actually want to open.</p>
+        <a href="/campaign/step/1" class="btn-primary large">Create Your Mail</a>
     </div>
 </section>
 
@@ -194,7 +194,7 @@
     }
 
     .per-letter {
-        font-size: 1.3rem;
+        font-size: 1.4rem;
         margin-top: 0.5rem;
         opacity: 0.9;
     }
@@ -258,14 +258,14 @@
     }
 
     .breakdown-intro {
-        font-size: 1.3rem;
+        font-size: 1.4rem;
         color: var(--text-light);
         margin-bottom: 3rem;
     }
 
     .cost-breakdown {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        grid-template-columns: repeat(2, 1fr);
         gap: 2rem;
         margin-bottom: 4rem;
     }
@@ -292,7 +292,7 @@
 
     .breakdown-card h4 {
         color: var(--primary-color);
-        font-size: 1.3rem;
+        font-size: 1.4rem;
         margin-bottom: 0.5rem;
     }
 
@@ -304,7 +304,7 @@
     }
 
     .breakdown-card p {
-        font-size: 1rem;
+        font-size: 1.4rem;
         color: var(--text-light);
         line-height: 1.5;
     }
@@ -329,7 +329,7 @@
     }
 
     .value-content p {
-        font-size: 1.2rem;
+        font-size: 1.7rem;
         line-height: 1.6;
         margin-bottom: 1rem;
         text-align: left;
@@ -360,7 +360,7 @@
     }
 
     .comparison-label {
-        font-size: 0.9rem;
+        font-size: 1.4rem;
         margin-bottom: 0.5rem;
         font-weight: bold;
     }
@@ -372,7 +372,7 @@
     }
 
     .comparison-sublabel {
-        font-size: 0.8rem;
+        font-size: 1.4rem;
         opacity: 0.8;
     }
 
@@ -435,7 +435,7 @@
     }
 
     .offer-card p {
-        font-size: 1.2rem;
+        font-size: 1.4rem;
         line-height: 1.6;
         margin-bottom: 2rem;
         color: var(--text-light);
@@ -450,7 +450,7 @@
     /* Pricing CTA */
     .pricing-cta {
         text-align: center;
-        padding: 6rem 2rem;
+        padding: 8rem 2rem;
         background: var(--primary-color);
         border: 3px solid var(--primary-dark);
         border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
@@ -461,13 +461,13 @@
 
     .pricing-cta h2 {
         font-size: 3rem;
-        margin-bottom: 1rem;
+        margin-bottom: 2rem;
         color: white;
     }
 
     .pricing-cta p {
         font-size: 1.5rem;
-        margin-bottom: 2rem;
+        margin-bottom: 3rem;
         opacity: 0.95;
     }
 
@@ -489,7 +489,7 @@
         }
 
         .subtitle {
-            font-size: 1.2rem;
+            font-size: 1.4rem;
         }
 
         .main-pricing-card {
@@ -538,15 +538,17 @@
         }
 
         .pricing-cta {
-            padding: 3rem 1.5rem;
+            padding: 5rem 1.5rem;
         }
 
         .pricing-cta h2 {
             font-size: 2rem;
+            margin-bottom: 1.5rem;
         }
 
         .pricing-cta p {
-            font-size: 1.2rem;
+            font-size: 1.4rem;
+            margin-bottom: 2.5rem;
         }
     }
 </style>

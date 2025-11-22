@@ -1,9 +1,13 @@
 <script>
+    import { authStore } from '$lib/stores/authStore';
     export let currentStep = 1;
 </script>
 
 <div class="progress-container visible">
     <div class="progress-bar">
+        {#if $authStore.user}
+            <a href="/dashboard" class="dashboard-back-btn">← Back to Dashboard</a>
+        {/if}
         <a href="/campaign/step/1" class="progress-step {currentStep >= 1 ? 'active' : ''} {currentStep > 1 ? 'completed' : ''}" data-step="1">
             <div class="step-circle">1</div>
             <span>Upload Stamp</span>
@@ -25,3 +29,33 @@
         </a>
     </div>
 </div>
+
+<style>
+    :global(.progress-container) {
+        position: relative;
+    }
+
+    .dashboard-back-btn {
+        position: absolute;
+        left: 2rem;
+        padding: 0.5rem 1rem;
+        background-color: var(--card-background);
+        color: var(--text-color);
+        text-decoration: none;
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        font-size: 1.4rem;
+        font-weight: 600;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .dashboard-back-btn:hover {
+        background-color: var(--primary-color);
+        color: white;
+        border-color: var(--primary-dark);
+        transform: translateX(-2px);
+    }
+</style>

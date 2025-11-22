@@ -390,7 +390,7 @@ body {
     align-items: center;
     justify-content: center;
     color: white;
-    font-size: 0.9rem;
+    font-size: 1.4rem;
     font-weight: bold;
     text-align: center;
     box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.2);
@@ -717,13 +717,13 @@ body {
 }
 
 .upload-hint {
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     color: var(--text-light);
     margin-top: 0.8rem;
 }
 
 .sample-download {
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     color: var(--primary-color);
     margin-top: 1rem;
     text-decoration: underline;
@@ -1222,7 +1222,7 @@ body {
     padding: 0.5rem;
     border: 1px solid #ddd;
     border-radius: 6px;
-    font-size: 1rem;
+    font-size: 1.4rem;
 }
 
 .edit-form-inline .form-row {
@@ -1437,7 +1437,7 @@ body {
     box-shadow: var(--shadow-lg);
     min-height: 400px;
     font-family: 'Georgia', serif;
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     /* Keep letter content formal */
     position: relative;
 }
@@ -1488,7 +1488,7 @@ body {
     border-top: 2px solid var(--border-color);
     color: var(--text-light);
     margin-top: 5rem;
-    font-size: 1.3rem;
+    font-size: 1.4rem;
 }
 
 /* Review Page Styles */
@@ -1556,8 +1556,40 @@ body {
     border: 1px solid var(--border-color);
     box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.05);
     font-family: 'Georgia', serif;
-    font-size: 1.3rem;
+    font-size: 1.4rem;
     margin-bottom: 1.5rem;
+}
+
+.review-return-address {
+    margin-bottom: 1rem;
+}
+
+.address-display {
+    padding: 1.5rem;
+    background: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 15px;
+    font-size: 1.4rem;
+    line-height: 1.8;
+}
+
+.address-display div {
+    margin-bottom: 0.3rem;
+}
+
+.address-display div:last-child {
+    margin-bottom: 0;
+}
+
+.address-placeholder {
+    padding: 1.5rem;
+    background: var(--card-background);
+    border: 1px dashed var(--border-color);
+    border-radius: 15px;
+    font-size: 1.4rem;
+    color: var(--text-light);
+    font-style: italic;
+    text-align: center;
 }
 
 .campaign-summary {
@@ -1612,7 +1644,7 @@ body {
 
     .btn-primary-small {
         padding: 0.8rem 1.5rem;
-        font-size: 1.3rem;
+        font-size: 1.4rem;
     }
 }
 
@@ -1639,7 +1671,7 @@ body {
 
     .btn-primary-small {
         padding: 0.8rem 1.5rem;
-        font-size: 1.3rem;
+        font-size: 1.4rem;
     }
 
     .btn-link {
@@ -1658,15 +1690,15 @@ body {
 
     .nav-links {
         gap: 1rem;
-        font-size: 1.3rem;
+        font-size: 1.4rem;
     }
 
     .nav-links a {
-        font-size: 1.3rem;
+        font-size: 1.4rem;
     }
 
     .btn-primary-small {
         padding: 0.7rem 1.2rem;
-        font-size: 1.2rem;
+        font-size: 1.4rem;
     }
 }

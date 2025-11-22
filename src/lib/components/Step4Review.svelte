@@ -1,7 +1,9 @@
 <script>
     import { appState } from '$lib/stores';
+    import { authStore } from '$lib/stores/authStore';
     import { createEventDispatcher } from 'svelte';
     import { browser } from '$app/environment';
+    import { goto } from '$app/navigation';
     import jsPDF from 'jspdf';
 
     const dispatch = createEventDispatcher();
@@ -161,13 +163,35 @@
             doc.setFontSize(9);
             doc.setFont('helvetica', 'normal');
 
-            // You could add sender info here if available
-            // For now, leaving space for it
             const returnAddressX = 10;
-            const returnAddressY = 12;
+            let returnAddressY = 12;
+            const returnAddressLineHeight = 4;
 
-            // If we have campaign name, use it as sender
-            if ($appState.letter.signature) {
+            // Display return address if available
+            const returnAddr = $appState.returnAddress;
+            if (returnAddr.name || returnAddr.street) {
+                if (returnAddr.name) {
+                    doc.text(returnAddr.name, returnAddressX, returnAddressY);
+                    returnAddressY += returnAddressLineHeight;
+                }
+                if (returnAddr.street) {
+                    doc.text(returnAddr.street, returnAddressX, returnAddressY);
+                    returnAddressY += returnAddressLineHeight;
+                }
+                const cityStateZip = [
+                    returnAddr.city,
+                    returnAddr.state,
+                    returnAddr.zip
+                ].filter(Boolean).join(', ').replace(/, ([^,]+)$/, ' $1');
+                if (cityStateZip) {
+                    doc.text(cityStateZip, returnAddressX, returnAddressY);
+                    returnAddressY += returnAddressLineHeight;
+                }
+                if (returnAddr.country && returnAddr.country !== 'USA') {
+                    doc.text(returnAddr.country, returnAddressX, returnAddressY);
+                }
+            } else if ($appState.letter.signature) {
+                // Fallback to signature if no return address
                 doc.text($appState.letter.signature, returnAddressX, returnAddressY);
             }
 
@@ -219,19 +243,33 @@
     function startCampaign() {
         dispatch('start');
     }
+
+    async function saveForLater() {
+        if (!$authStore.user) return;
+        
+        try {
+            // Save the current campaign state to Firestore
+            await appState.saveToFirestore($appState, $authStore.user.uid);
+            // Navigate to dashboard
+            goto('/dashboard');
+        } catch (error) {
+            console.error('Error saving campaign:', error);
+            alert('There was an error saving your campaign. Please try again.');
+        }
+    }
 </script>
 
 <div class="step-container">
-    <h2>Step 4: Review Your Campaign</h2>
-    <p class="step-description">Review all your inputs before launching your campaign.</p>
+    <h2>Step 4: Review Your Mail</h2>
+    <p class="step-description">Review all your inputs before launching your mail.</p>
 
     <div class="campaign-name-section">
-        <label for="campaignName">Campaign Name</label>
+        <label for="campaignName">Title</label>
         <input 
             id="campaignName"
             type="text" 
             bind:value={$appState.name}
-            placeholder="Enter a name for your campaign..."
+            placeholder="To find this group of mail in the future..."
             class="campaign-name-input"
         />
     </div>
@@ -271,27 +309,51 @@
             </div>
             <button class="btn-link" on:click={() => dispatch('edit', 3)}>Edit</button>
         </div>
+
+        <div class="review-card">
+            <h3>Return Address</h3>
+            <div class="review-return-address">
+                {#if $appState.returnAddress.name || $appState.returnAddress.street}
+                    <div class="address-display">
+                        {#if $appState.returnAddress.name}
+                            <div><strong>{$appState.returnAddress.name}</strong></div>
+                        {/if}
+                        {#if $appState.returnAddress.street}
+                            <div>{$appState.returnAddress.street}</div>
+                        {/if}
+                        {#if $appState.returnAddress.city || $appState.returnAddress.state || $appState.returnAddress.zip}
+                            <div>
+                                {[
+                                    $appState.returnAddress.city,
+                                    $appState.returnAddress.state,
+                                    $appState.returnAddress.zip
+                                ].filter(Boolean).join(', ').replace(/, ([^,]+)$/, ' $1')}
+                            </div>
+                        {/if}
+                        {#if $appState.returnAddress.country && $appState.returnAddress.country !== 'USA'}
+                            <div>{$appState.returnAddress.country}</div>
+                        {/if}
+                    </div>
+                {:else}
+                    <div class="address-placeholder">No return address set</div>
+                {/if}
+            </div>
+            <button class="btn-link" on:click={() => dispatch('edit', 3)}>Edit</button>
+        </div>
     </div>
 
     <div class="campaign-summary">
-        <h3>Campaign Summary</h3>
         <div class="summary-stats">
-            <div class="stat">
-                <span class="stat-value">{$appState.addresses.length}</span>
-                <span class="stat-label">Letters</span>
-            </div>
-            <div class="stat">
-                <span class="stat-value">{$appState.addresses.length}</span>
-                <span class="stat-label">Wax Seals</span>
-            </div>
+        <span class="stat-label">
+            {$appState.addresses.length} Letters Planned
+        </span>
         </div>
     </div>
 
     <!-- Preview Letters Section -->
     <div class="preview-letters-section">
         <h3>Preview Individual Letters</h3>
-        <p class="preview-description">Download personalized PDFs for each recipient to preview how their letter and envelope will look.</p>
-
+        
         <div class="recipients-preview-list">
             {#each $appState.addresses as address, index}
                 <div class="recipient-preview-item">
@@ -316,7 +378,7 @@
                             {:else}
                                 <span class="icon">&#128196;</span>
                             {/if}
-                            Letter
+                            Download Letter
                         </button>
                         <button
                             class="btn-preview-download"
@@ -329,7 +391,7 @@
                             {:else}
                                 <span class="icon">&#9993;</span>
                             {/if}
-                            Envelope
+                            DownloadEnvelope
                         </button>
                     </div>
                 </div>
@@ -339,6 +401,12 @@
 
     <div class="step-actions center">
         <button class="btn-secondary" on:click={() => dispatch('back')}>Back</button>
+        {#if $authStore.user && !$authStore.loading}
+            <button class="btn-secondary" on:click={saveForLater}>Save for Later</button>
+        {/if}
+        {#if !$authStore.user && !$authStore.loading}
+            <a href="/login" class="sign-in-link">Sign In To Save Progress</a>
+        {/if}
         <button class="btn-primary large" on:click={startCampaign}>Continue to Payment</button>
     </div>
 </div>
@@ -362,7 +430,7 @@
     .campaign-name-input {
         width: 100%;
         padding: 0.75rem;
-        font-size: 1rem;
+        font-size: 1.4rem;
         border: 2px solid var(--border-color);
         border-radius: 8px;
         box-sizing: border-box;
@@ -395,7 +463,7 @@
     .preview-description {
         color: var(--text-light);
         margin-bottom: 1.5rem;
-        font-size: 0.95rem;
+        font-size: 1.4rem;
     }
 
     .recipients-preview-list {
@@ -410,7 +478,7 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        padding: 1rem 1.25rem;
+        padding: 1.25rem 1.5rem;
         border-bottom: 1px solid var(--border-color);
         transition: background-color 0.2s;
     }
@@ -434,9 +502,9 @@
     .recipient-number {
         background: var(--primary-color);
         color: white;
-        padding: 0.25rem 0.5rem;
+        padding: 0.4rem 0.7rem;
         border-radius: 4px;
-        font-size: 0.85rem;
+        font-size: 1.4rem;
         font-weight: bold;
         flex-shrink: 0;
     }
@@ -448,14 +516,14 @@
     }
 
     .recipient-details strong {
-        font-size: 1rem;
+        font-size: 1.4rem;
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
     }
 
     .recipient-address {
-        font-size: 0.85rem;
+        font-size: 1.4rem;
         color: var(--text-light);
         white-space: nowrap;
         overflow: hidden;
@@ -471,9 +539,9 @@
     .btn-preview-download {
         display: flex;
         align-items: center;
-        gap: 0.35rem;
-        padding: 0.5rem 0.75rem;
-        font-size: 0.85rem;
+        gap: 0.5rem;
+        padding: 0.75rem 1.25rem;
+        font-size: 1.4rem;
         font-family: inherit;
         font-weight: 600;
         border: 2px solid var(--border-color);
@@ -501,7 +569,7 @@
     }
 
     .btn-preview-download .icon {
-        font-size: 1rem;
+        font-size: 1.4rem;
     }
 
     .spinner-small {
@@ -539,6 +607,34 @@
         background: var(--text-light);
     }
 
+    .step-actions.center {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .sign-in-link {
+        display: inline-block;
+        padding: 1rem 2rem;
+        background-color: var(--primary-color);
+        color: white;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: 600;
+        box-shadow: var(--shadow);
+        transition: all 0.3s ease;
+        font-size: 1.4rem;
+    }
+
+    .sign-in-link:hover {
+        background-color: var(--primary-dark);
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-lg);
+    }
+
     @media (max-width: 640px) {
         .recipient-preview-item {
             flex-direction: column;
@@ -553,6 +649,15 @@
         .btn-preview-download {
             flex: 1;
             justify-content: center;
+        }
+
+        .step-actions.center {
+            flex-direction: column;
+        }
+
+        .sign-in-link {
+            width: 100%;
+            text-align: center;
         }
     }
 </style>

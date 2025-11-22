@@ -215,7 +215,7 @@
     }
 
     .last-updated {
-        font-size: 1rem;
+        font-size: 1.4rem;
         color: var(--text-light);
         opacity: 0.7;
     }
@@ -244,7 +244,7 @@
     }
 
     .policy-card.highlight p {
-        font-size: 1.2rem;
+        font-size: 1.4rem;
         line-height: 1.6;
         opacity: 0.95;
     }
@@ -289,13 +289,13 @@
 
     .point-item strong {
         color: var(--primary-color);
-        font-size: 1.1rem;
+        font-size: 1.4rem;
         display: block;
         margin-bottom: 0.3rem;
     }
 
     .point-item p {
-        font-size: 0.95rem;
+        font-size: 1.4rem;
         color: var(--text-light);
         margin: 0;
         line-height: 1.4;
@@ -323,7 +323,7 @@
     }
 
     .policy-section p {
-        font-size: 1.1rem;
+        font-size: 1.4rem;
         line-height: 1.7;
         margin-bottom: 1rem;
         color: var(--text-color);
@@ -331,7 +331,7 @@
 
     .policy-section ul {
         margin: 1rem 0 1rem 1.5rem;
-        font-size: 1.1rem;
+        font-size: 1.4rem;
         line-height: 1.7;
     }
 
@@ -368,12 +368,12 @@
         color: var(--primary-color);
         display: block;
         margin-bottom: 0.5rem;
-        font-size: 1rem;
+        font-size: 1.4rem;
     }
 
     .security-item p {
         margin: 0;
-        font-size: 0.95rem;
+        font-size: 1.4rem;
         color: var(--text-light);
     }
 
@@ -388,7 +388,7 @@
 
     .deletion-highlight strong {
         color: var(--text-color);
-        font-size: 1.1rem;
+        font-size: 1.4rem;
         display: block;
         margin-bottom: 0.5rem;
     }
@@ -396,7 +396,7 @@
     .deletion-highlight p {
         margin: 0;
         color: var(--text-color);
-        font-size: 1rem;
+        font-size: 1.4rem;
     }
 
     /* CTA */
@@ -410,7 +410,7 @@
     }
 
     .policy-cta p {
-        font-size: 1.3rem;
+        font-size: 1.4rem;
         margin-bottom: 1.5rem;
         color: var(--text-color);
     }
@@ -426,7 +426,7 @@
         }
 
         .subtitle {
-            font-size: 1.2rem;
+            font-size: 1.4rem;
         }
 
         .policy-card.highlight {
@@ -451,7 +451,7 @@
 
         .policy-section p,
         .policy-section ul {
-            font-size: 1rem;
+            font-size: 1.4rem;
         }
 
         .security-measures {

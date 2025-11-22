@@ -61,7 +61,7 @@
             <div class="success-icon">✓</div>
             <h1>Payment Successful!</h1>
             <p class="success-message">
-                Thank you for your payment. Your campaign has been submitted and we'll start processing your wax-sealed letters shortly.
+                Thank you for your payment. Your mail has been submitted and we'll start processing your wax-sealed letters shortly.
             </p>
 
             <div class="order-details">
@@ -71,7 +71,7 @@
                         <div class="timeline-number">1</div>
                         <div class="timeline-content">
                             <h3>Processing</h3>
-                            <p>We'll review your campaign details and prepare the letters</p>
+                            <p>We'll review the details and email you to make sure the wax seal design is correct</p>
                         </div>
                     </div>
                     <div class="timeline-item">
@@ -92,13 +92,13 @@
             </div>
 
             <div class="campaign-info">
-                <p><strong>Campaign ID:</strong> {campaignId || 'N/A'}</p>
-                <p class="small-text">You'll receive updates via email as your campaign progresses.</p>
+                <p><strong>Mail ID:</strong> {campaignId || 'N/A'}</p>
+                <p class="small-text">You'll receive updates via email as your mail progresses.</p>
             </div>
 
             <div class="success-actions">
                 <button class="btn-secondary" on:click={startNewCampaign}>
-                    Start New Campaign
+                    Create More Mail
                 </button>
                 <button class="btn-primary" on:click={goToDashboard}>
                     Go to Dashboard
@@ -179,7 +179,7 @@
     }
 
     .success-message {
-        font-size: 1.1rem;
+        font-size: 1.4rem;
         color: #666;
         margin-bottom: 3rem;
         line-height: 1.6;
@@ -223,7 +223,7 @@
     }
 
     .timeline-content h3 {
-        font-size: 1.1rem;
+        font-size: 1.4rem;
         margin-bottom: 0.5rem;
         color: #333;
     }
@@ -246,7 +246,7 @@
     }
 
     .small-text {
-        font-size: 0.9rem;
+        font-size: 1.4rem;
         color: #999;
         margin-top: 1rem;
     }
@@ -263,7 +263,7 @@
         padding-top: 2rem;
         border-top: 1px solid #eee;
         color: #999;
-        font-size: 0.9rem;
+        font-size: 1.4rem;
     }
 
     .support-info a {
@@ -279,7 +279,7 @@
     .btn-primary, .btn-secondary {
         padding: 1rem 2rem;
         border-radius: 8px;
-        font-size: 1rem;
+        font-size: 1.4rem;
         cursor: pointer;
         border: none;
         transition: all 0.3s ease;

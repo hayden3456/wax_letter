@@ -107,7 +107,7 @@
 
         {#if fromCampaign}
             <div class="info-message">
-                💾 Your campaign draft will be saved to your account
+                💾 Your mail draft will be saved to your account
             </div>
         {/if}
 

@@ -291,7 +291,7 @@
             on:click={() => dispatch('next')} 
             disabled={!$appState.letter.body.trim()}
         >
-            Next: Review Campaign
+            Next: Review Mail
         </button>
     </div>
 </div>
@@ -315,7 +315,7 @@
         display: block;
         margin-bottom: 0.75rem;
         color: var(--text-color);
-        font-size: 1.05rem;
+        font-size: 1.4rem;
     }
 
     .placeholder-grid {
@@ -331,7 +331,7 @@
         padding: 0.4rem 0.8rem;
         border-radius: 4px;
         cursor: pointer;
-        font-size: 0.95rem;
+        font-size: 1.4rem;
         font-family: 'Courier New', monospace;
         transition: all 0.2s;
     }
@@ -351,12 +351,12 @@
         margin-bottom: 0.4rem;
         font-weight: 600;
         color: var(--text-color);
-        font-size: 1.1rem;
+        font-size: 1.4rem;
     }
 
     .field-hint {
         display: block;
-        font-size: 0.95rem;
+        font-size: 1.4rem;
         font-weight: normal;
         color: var(--text-light);
         margin-top: 0.25rem;
@@ -425,7 +425,7 @@
         color: var(--text-color);
         border: 2px solid var(--border-color);
         padding: 0.9rem 1.7rem;
-        font-size: 1.3rem;
+        font-size: 1.4rem;
         font-family: inherit;
         border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
         cursor: pointer;
@@ -465,7 +465,7 @@
     }
 
     .preview-note {
-        font-size: 1.3rem;
+        font-size: 1.4rem;
         color: var(--text-light);
         margin-bottom: 1rem;
     }

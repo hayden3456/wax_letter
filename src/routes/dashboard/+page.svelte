@@ -216,7 +216,7 @@
         
         const confirmMsg = campaignName 
             ? `Delete "${campaignName}"?` 
-            : 'Delete this campaign?';
+            : 'Delete this mail?';
         
         if (confirm(confirmMsg)) {
             try {
@@ -227,7 +227,7 @@
                 console.log('✅ Campaign deleted:', campaignId);
             } catch (error) {
                 console.error('Failed to delete campaign:', error);
-                alert('Failed to delete campaign. Please try again.');
+                alert('Failed to delete mail. Please try again.');
             }
         }
     }
@@ -250,32 +250,32 @@
             console.log('✅ Campaign claimed:', campaignId);
         } catch (error) {
             console.error('Failed to claim campaign:', error);
-            alert('Failed to claim campaign. Please try again.');
+            alert('Failed to claim mail. Please try again.');
         }
     }
 </script>
 
 <div class="dashboard-container">
     <div class="dashboard-header">
-        <h1>My Campaigns</h1>
+        <h1>My Mail</h1>
         <div class="header-actions">
-            <button onclick={startSampleLetter} class="btn-secondary-outline">Get a Sample Letter</button>
-            <button onclick={startNewCampaign} class="btn-primary">Start New Campaign</button>
+         
+            <button onclick={startNewCampaign} class="btn-primary">Create More Mail</button>
         </div>
     </div>
 
     {#if loading}
         <div class="loading-state">
             <div class="spinner"></div>
-            <p>Loading campaigns...</p>
+            <p>Loading mail...</p>
         </div>
     {:else if campaigns.length === 0}
         <div class="empty-state" in:fade>
             <div class="empty-icon">&#128237;</div>
-            <h2>No campaigns yet</h2>
-            <p>Start your first bulk mailing campaign today!</p>
+            <h2>No mail yet</h2>
+            <p>Start your first bulk mailing today!</p>
             <div class="empty-actions">
-                <button onclick={startNewCampaign} class="btn-primary">Create Campaign</button>
+                <button onclick={startNewCampaign} class="btn-primary">Create Your Mail</button>
                 <button onclick={startSampleLetter} class="btn-secondary">Try a Sample First</button>
             </div>
             <p class="sample-hint">New to wax seals? Order a sample letter for $15 to see our quality.</p>
@@ -288,7 +288,7 @@
                         <button 
                             class="delete-btn" 
                             onclick={(e) => handleDeleteCampaign(e, campaign.id, campaign.name)}
-                            title="Delete campaign"
+                            title="Delete mail"
                         >
                             ✕
                         </button>
@@ -296,7 +296,7 @@
                             <button 
                                 class="claim-btn" 
                                 onclick={(e) => claimCampaign(e, campaign.id)}
-                                title="Claim this campaign"
+                                title="Claim this mail"
                             >
                                 📌 Claim
                             </button>
@@ -309,7 +309,7 @@
                                 ⚠️ Unclaimed
                             </div>
                         {/if}
-                        <h3>{campaign.name || 'Untitled Campaign'}</h3>
+                        <h3>{campaign.name || 'Untitled Mail'}</h3>
                         <div class="campaign-details">
                             <div class="detail">
                                 <span class="icon">📅</span>
@@ -319,12 +319,7 @@
                                 <span class="icon">✉️</span>
                                 <span>{campaign.recipientCount || campaign.addresses?.length || 0} Recipients</span>
                             </div>
-                            {#if campaign.stampImage || campaign.stampImageUrl}
-                                <div class="detail">
-                                    <span class="icon">🔏</span>
-                                    <span>Custom Wax Seal</span>
-                                </div>
-                            {/if}
+
                         </div>
                         <div class="campaign-actions">
                             <span class="btn-text">Continue Editing →</span>
@@ -418,7 +413,7 @@
     }
 
     .sample-hint {
-        font-size: 1rem;
+        font-size: 1.4rem;
         color: var(--text-muted, #666);
         margin-top: 1.5rem;
         font-style: italic;
@@ -475,7 +470,7 @@
         position: absolute;
         top: 1rem;
         right: 1rem;
-        font-size: 0.9rem;
+        font-size: 1.4rem;
         padding: 0.2rem 0.6rem;
         border-radius: 10px;
         font-weight: bold;
@@ -496,7 +491,7 @@
         border-radius: 50%;
         width: 28px;
         height: 28px;
-        font-size: 16px;
+        font-size: 1.4rem;
         line-height: 1;
         cursor: pointer;
         display: flex;
@@ -525,7 +520,7 @@
         border: none;
         border-radius: 15px;
         padding: 0.4rem 0.8rem;
-        font-size: 14px;
+        font-size: 1.4rem;
         cursor: pointer;
         display: flex;
         align-items: center;
@@ -549,7 +544,7 @@
         position: absolute;
         top: 3rem;
         right: 1rem;
-        font-size: 0.75rem;
+        font-size: 1.4rem;
         padding: 0.3rem 0.6rem;
         border-radius: 10px;
         font-weight: bold;

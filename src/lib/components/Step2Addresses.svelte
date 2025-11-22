@@ -484,6 +484,73 @@ Michael,Brown,654 Cedar Lane,Phoenix,AZ,85001`;
         </div>
     {/if}
 
+    <div class="return-address-section">
+        <h3>Return Address</h3>
+        <p class="section-description">This address will appear on the envelope as the return address</p>
+        
+        <div class="form-group">
+            <label for="returnAddressName">Name / Company</label>
+            <input 
+                type="text" 
+                id="returnAddressName" 
+                bind:value={$appState.returnAddress.name} 
+                placeholder="Your name or company name"
+            >
+        </div>
+
+        <div class="form-group">
+            <label for="returnAddressStreet">Street Address</label>
+            <input 
+                type="text" 
+                id="returnAddressStreet" 
+                bind:value={$appState.returnAddress.street} 
+                placeholder="123 Main St, Suite 100"
+            >
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="returnAddressCity">City</label>
+                <input 
+                    type="text" 
+                    id="returnAddressCity" 
+                    bind:value={$appState.returnAddress.city} 
+                    placeholder="City"
+                >
+            </div>
+            <div class="form-group">
+                <label for="returnAddressState">State</label>
+                <input 
+                    type="text" 
+                    id="returnAddressState" 
+                    bind:value={$appState.returnAddress.state} 
+                    placeholder="State"
+                >
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-group">
+                <label for="returnAddressZip">ZIP Code</label>
+                <input 
+                    type="text" 
+                    id="returnAddressZip" 
+                    bind:value={$appState.returnAddress.zip} 
+                    placeholder="12345"
+                >
+            </div>
+            <div class="form-group">
+                <label for="returnAddressCountry">Country</label>
+                <input 
+                    type="text" 
+                    id="returnAddressCountry" 
+                    bind:value={$appState.returnAddress.country} 
+                    placeholder="USA"
+                >
+            </div>
+        </div>
+    </div>
+
     <div class="step-actions">
         <button class="btn-secondary" on:click={() => dispatch('back')}>Back</button>
         <button class="btn-primary" on:click={() => dispatch('next')} disabled={$appState.addresses.length === 0}>Next: Write Letter</button>
@@ -507,3 +574,23 @@ Michael,Brown,654 Cedar Lane,Phoenix,AZ,85001`;
         </div>
     </div>
 {/if}
+
+<style>
+    .return-address-section {
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 2px solid var(--border-color);
+    }
+
+    .return-address-section h3 {
+        color: var(--primary-color);
+        font-size: 2.2rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .section-description {
+        color: var(--text-light);
+        font-size: 1.4rem;
+        margin-bottom: 1.5rem;
+    }
+</style>

@@ -77,7 +77,7 @@
     }
 
     .signup-prompt .small-text {
-        font-size: 0.9rem;
+        font-size: 1.4rem;
         color: var(--text-light);
         margin-top: 1rem;
         margin-bottom: 0;

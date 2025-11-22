@@ -279,13 +279,6 @@
             </button>
             <button
                 class="tab-btn"
-                class:active={activeTab === 'address'}
-                onclick={() => activeTab = 'address'}
-            >
-                Return Address
-            </button>
-            <button
-                class="tab-btn"
                 class:active={activeTab === 'security'}
                 onclick={() => activeTab = 'security'}
             >
@@ -348,15 +341,7 @@
                         </div>
                     </div>
 
-                    <div class="form-group">
-                        <label for="displayName">Display Name</label>
-                        <input
-                            type="text"
-                            id="displayName"
-                            bind:value={displayName}
-                            placeholder="How would you like to be called?"
-                        />
-                    </div>
+
 
                     <div class="form-group">
                         <label for="email">Email Address</label>
@@ -386,82 +371,6 @@
             </div>
         {/if}
 
-        <!-- Return Address Tab -->
-        {#if activeTab === 'address'}
-            <div class="profile-section">
-                <h2>Default Return Address</h2>
-                <p class="section-description">This address will be used as the default return address for your mailings</p>
-
-                <div class="form-container">
-                    <div class="form-group">
-                        <label for="addressName">Name / Company</label>
-                        <input
-                            type="text"
-                            id="addressName"
-                            bind:value={addressName}
-                            placeholder="Your name or company name"
-                        />
-                    </div>
-
-                    <div class="form-group">
-                        <label for="addressStreet">Street Address</label>
-                        <input
-                            type="text"
-                            id="addressStreet"
-                            bind:value={addressStreet}
-                            placeholder="123 Main St, Suite 100"
-                        />
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="addressCity">City</label>
-                            <input
-                                type="text"
-                                id="addressCity"
-                                bind:value={addressCity}
-                                placeholder="City"
-                            />
-                        </div>
-                        <div class="form-group">
-                            <label for="addressState">State</label>
-                            <input
-                                type="text"
-                                id="addressState"
-                                bind:value={addressState}
-                                placeholder="State"
-                            />
-                        </div>
-                    </div>
-
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="addressZip">ZIP Code</label>
-                            <input
-                                type="text"
-                                id="addressZip"
-                                bind:value={addressZip}
-                                placeholder="12345"
-                            />
-                        </div>
-                        <div class="form-group">
-                            <label for="addressCountry">Country</label>
-                            <input
-                                type="text"
-                                id="addressCountry"
-                                bind:value={addressCountry}
-                                placeholder="USA"
-                            />
-                        </div>
-                    </div>
-
-                    <button class="btn-primary" onclick={saveReturnAddress}>
-                        Save Address
-                    </button>
-                </div>
-            </div>
-        {/if}
-
         <!-- Security Tab -->
         {#if activeTab === 'security'}
             <div class="profile-section">
@@ -469,7 +378,7 @@
                 <p class="section-description">Manage your password and security settings</p>
 
                 <!-- Password Reset via Email -->
-                <div class="security-card">
+                <!-- <div class="security-card">
                     <h3>Reset Password via Email</h3>
                     <p>We'll send a password reset link to your email address.</p>
 
@@ -488,7 +397,7 @@
                             {/if}
                         </div>
                     {/if}
-                </div>
+                </div> -->
 
                 <!-- Direct Password Change -->
                 <div class="security-card">
@@ -561,7 +470,7 @@
         {#if activeTab === 'orders'}
             <div class="profile-section">
                 <h2>Order History</h2>
-                <p class="section-description">View your past campaigns and orders</p>
+                <p class="section-description">View your past mail and orders</p>
 
                 {#if $userStore.orders && $userStore.orders.length > 0}
                     <div class="orders-list">
@@ -604,9 +513,9 @@
                 {:else}
                     <div class="empty-state">
                         <p>No orders yet</p>
-                        <p class="empty-hint">Your campaign history will appear here once you create your first mailing.</p>
+                        <p class="empty-hint">Your mail history will appear here once you create your first mailing.</p>
                         <a href="/campaign/step/1" class="btn-primary">
-                            Start Your First Campaign
+                            Create Your Mail
                         </a>
                     </div>
                 {/if}
@@ -641,7 +550,7 @@
                             />
                             <span class="checkbox-text">
                                 <strong>Order Updates</strong>
-                                <small>Get notified when your campaigns are processed, shipped, or delivered</small>
+                                <small>Get notified when your mail is processed, shipped, or delivered</small>
                             </span>
                         </label>
                     </div>
@@ -739,7 +648,7 @@
     .section-description {
         color: var(--text-light);
         margin-bottom: 2rem;
-        font-size: 1.3rem;
+        font-size: 1.4rem;
     }
 
     /* Form Container */
@@ -748,7 +657,7 @@
     }
 
     .form-hint {
-        font-size: 1.3rem;
+        font-size: 1.4rem;
         color: var(--text-light);
         margin-top: 0.5rem;
         display: block;
@@ -772,14 +681,14 @@
     .security-card p {
         color: var(--text-light);
         margin-bottom: 1.5rem;
-        font-size: 1.3rem;
+        font-size: 1.4rem;
     }
 
     .inline-status {
         margin-top: 1.5rem;
         padding: 1.2rem;
         border-radius: 8px;
-        font-size: 1.3rem;
+        font-size: 1.4rem;
     }
 
     .inline-status.success {
@@ -828,7 +737,7 @@
     .status-badge {
         padding: 0.5rem 1.2rem;
         border-radius: 20px;
-        font-size: 1.2rem;
+        font-size: 1.4rem;
         font-weight: bold;
         text-transform: capitalize;
     }
@@ -866,14 +775,14 @@
     }
 
     .detail-label {
-        font-size: 1.2rem;
+        font-size: 1.4rem;
         color: var(--text-light);
     }
 
     .detail-value {
         font-weight: bold;
         color: var(--text-color);
-        font-size: 1.3rem;
+        font-size: 1.4rem;
     }
 
     .order-actions {
@@ -888,7 +797,7 @@
         padding: 0.8rem 1.5rem;
         border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
         font-family: inherit;
-        font-size: 1.3rem;
+        font-size: 1.4rem;
         font-weight: bold;
         cursor: pointer;
         text-decoration: none;
@@ -960,7 +869,7 @@
 
     .checkbox-text small {
         color: var(--text-light);
-        font-size: 1.3rem;
+        font-size: 1.4rem;
     }
 
     /* Responsive */
@@ -975,7 +884,7 @@
 
         .profile-tabs .tab-btn {
             padding: 0.8rem 1.2rem;
-            font-size: 1.2rem;
+            font-size: 1.4rem;
         }
 
         .profile-section {

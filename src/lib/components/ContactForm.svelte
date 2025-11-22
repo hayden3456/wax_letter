@@ -63,7 +63,7 @@ ${formData.get('message')}`;
   <div class="contact-container">
     <div class="contact-header">
       <h2>Let's Talk About Your Project</h2>
-      <p>Have questions or ready to start your campaign? We'd love to hear from you!</p>
+      <p>Have questions or ready to start your mail? We'd love to hear from you!</p>
     </div>
     
     {#if submitted}
@@ -120,7 +120,7 @@ ${formData.get('message')}`;
               <option value="corporate">Corporate Letters</option>
               <option value="holiday">Holiday Cards</option>
               <option value="thank_you">Thank You Notes</option>
-              <option value="marketing">Marketing Campaign</option>
+              <option value="marketing">Marketing Mail</option>
               <option value="other">Other</option>
             </select>
           </div>
@@ -275,7 +275,7 @@ ${formData.get('message')}`;
   }
 
   .success-text {
-    font-size: 1.2rem;
+    font-size: 1.4rem;
     color: var(--text-light);
   }
 
@@ -290,7 +290,7 @@ ${formData.get('message')}`;
     }
 
     .contact-header p {
-      font-size: 1.1rem;
+      font-size: 1.4rem;
     }
 
     .contact-form {

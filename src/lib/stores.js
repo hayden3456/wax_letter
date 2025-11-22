@@ -9,12 +9,22 @@ const initialState = {
     userId: null, // User ID if authenticated
     name: '', // Campaign name
     stampImage: null,
+    aiLetterImage: null, // AI-generated letter preview image (data URL)
+    aiLetterImageUrl: null, // Cloud URL for AI-generated letter preview
     addresses: [],
     letter: {
         subject: 'Dear {{FirstName}},',
         body: '',
         closing: 'Sincerely,',
         signature: ''
+    },
+    returnAddress: {
+        name: '',
+        street: '',
+        city: '',
+        state: '',
+        zip: '',
+        country: 'USA'
     },
     currentStep: 1,
     isSample: false // Flag to indicate if this is a sample letter order
@@ -27,6 +37,9 @@ const SAVE_DELAY = 2000; // 2 seconds
 // Flag to prevent auto-save during initial load
 let isInitialLoad = true;
 let initialLoadTimeout;
+
+// Flag to track if we're on a campaign editing page
+let isOnCampaignPage = false;
 
 // Create store
 const createWaxSealStore = () => {
@@ -155,6 +168,14 @@ if (browser) {
         }
     });
 
+    // Helper function to check if we're on a campaign editing page
+    function isOnCampaignEditingPage() {
+        if (!browser) return false;
+        const path = window.location.pathname;
+        // Only auto-save when actively editing a campaign
+        return path.startsWith('/campaign/step/') || path.startsWith('/sample/step/');
+    }
+
     // Subscribe to changes and save to both localStorage and Firestore
     appState.subscribe(value => {
         // Always save to localStorage immediately (fast, synchronous)
@@ -176,9 +197,16 @@ if (browser) {
                 return;
             }
             
-            // Only save to Firestore if there's actual content
-            const hasContent = value.campaignId || // Already has an ID (existing campaign)
-                               value.stampImage || // Has uploaded stamp
+            // Only auto-save when on campaign editing pages
+            if (!isOnCampaignEditingPage()) {
+                console.log('⏭️ Skipping auto-save: not on campaign editing page');
+                return;
+            }
+            
+            // Only save to Firestore if there's actual content (not just a campaignId)
+            // Don't create campaigns just because there's a campaignId - need real content
+            const hasContent = value.stampImage || // Has uploaded stamp
+                               value.aiLetterImage || // Has AI-generated letter preview
                                value.addresses?.length > 0 || // Has addresses
                                value.letter?.body?.trim() || // Has letter content
                                value.letter?.signature?.trim() || // Has signature

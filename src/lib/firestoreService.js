@@ -46,6 +46,14 @@ export async function createCampaign(campaignData) {
             campaign.stampImage = campaignData.stampImage;
         }
 
+        // Upload AI-generated letter image to Storage if it exists
+        if (campaignData.aiLetterImage) {
+            const aiLetterUrl = await uploadAiLetterImage(campaignRef.id, campaignData.aiLetterImage);
+            campaign.aiLetterImageUrl = aiLetterUrl;
+            // Keep the data URL for local preview
+            campaign.aiLetterImage = campaignData.aiLetterImage;
+        }
+
         await setDoc(campaignRef, campaign);
         return campaignRef.id;
     } catch (error) {
@@ -93,6 +101,12 @@ export async function updateCampaign(campaignId, updates) {
             updates.stampImageUrl = stampUrl;
         }
 
+        // Handle AI-generated letter image upload if updated
+        if (updates.aiLetterImage && updates.aiLetterImage.startsWith('data:')) {
+            const aiLetterUrl = await uploadAiLetterImage(campaignId, updates.aiLetterImage);
+            updates.aiLetterImageUrl = aiLetterUrl;
+        }
+
         await updateDoc(campaignRef, {
             ...updates,
             updatedAt: serverTimestamp()
@@ -117,6 +131,15 @@ export async function deleteCampaign(campaignId) {
         } catch (error) {
             // Image might not exist, that's okay
             console.log('No stamp image to delete');
+        }
+
+        // Delete AI-generated letter image from Storage
+        try {
+            const aiLetterRef = ref(storage, `campaigns/${campaignId}/ai-letter`);
+            await deleteObject(aiLetterRef);
+        } catch (error) {
+            // Image might not exist, that's okay
+            console.log('No AI letter image to delete');
         }
 
         // Delete campaign document
@@ -171,6 +194,24 @@ async function uploadStampImage(campaignId, dataUrl) {
         return downloadUrl;
     } catch (error) {
         console.error('Error uploading stamp image:', error);
+        throw error;
+    }
+}
+
+/**
+ * Upload AI-generated letter image to Firebase Storage
+ * @param {string} campaignId - The campaign ID
+ * @param {string} dataUrl - The data URL of the image
+ * @returns {Promise<string>} - The download URL
+ */
+async function uploadAiLetterImage(campaignId, dataUrl) {
+    try {
+        const aiLetterRef = ref(storage, `campaigns/${campaignId}/ai-letter`);
+        await uploadString(aiLetterRef, dataUrl, 'data_url');
+        const downloadUrl = await getDownloadURL(aiLetterRef);
+        return downloadUrl;
+    } catch (error) {
+        console.error('Error uploading AI letter image:', error);
         throw error;
     }
 }

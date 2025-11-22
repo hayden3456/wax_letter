@@ -39,9 +39,9 @@ export async function POST({ request, url }) {
                     price_data: {
                         currency: 'usd',
                         product_data: {
-                            name: 'Wax Letter Campaign',
+                            name: 'Custom Wax Seal Letter Service',
                             description: `${letterCount} personalized wax-sealed letter${letterCount > 1 ? 's' : ''}`,
-                            images: ['https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?w=400'], // Placeholder
+                            images: ['https://waxletter.com/waxletterlogo.png?w=400'], // Placeholder
                         },
                         unit_amount: pricePerLetter,
                     },

@@ -16,30 +16,24 @@
         <div class="steps-container">
             <div class="step-card">
                 <div class="step-number">1</div>
-                <h3>Make an Account</h3>
-                <p>Sign up to get started. Your account lets you track orders and save your preferences.</p>
-            </div>
-
-            <div class="step-card">
-                <div class="step-number">2</div>
                 <h3>Give Us Your Logo</h3>
                 <p>Upload your logo or design. We'll use this to create your custom wax seal stamp.</p>
             </div>
 
             <div class="step-card">
-                <div class="step-number">3</div>
+                <div class="step-number">2</div>
                 <h3>List of Recipients</h3>
                 <p>Provide the names and addresses of everyone you want to mail to.</p>
             </div>
 
             <div class="step-card">
-                <div class="step-number">4</div>
+                <div class="step-number">3</div>
                 <h3>Custom Letter Maker</h3>
                 <p>Write your letter content using our editor with personalization options.</p>
             </div>
 
             <div class="step-card">
-                <div class="step-number">5</div>
+                <div class="step-number">4</div>
                 <h3>Review and Send Off</h3>
                 <p>Preview everything, confirm your order, and we'll take it from there!</p>
             </div>
@@ -271,7 +265,7 @@
     }
 
     .step-card p {
-        font-size: 1.3rem;
+        font-size: 1.4rem;
         color: var(--text-light);
         line-height: 1.5;
     }
@@ -327,7 +321,7 @@
 
     .update-content p {
         color: var(--text-light);
-        font-size: 1.3rem;
+        font-size: 1.4rem;
         line-height: 1.5;
         margin: 0;
     }
@@ -371,7 +365,7 @@
     }
 
     .faq-card p {
-        font-size: 1.3rem;
+        font-size: 1.4rem;
         color: var(--text-light);
         line-height: 1.6;
         margin-bottom: 0.8rem;
@@ -387,7 +381,7 @@
     }
 
     .faq-card li {
-        font-size: 1.3rem;
+        font-size: 1.4rem;
         margin-bottom: 0.5rem;
         line-height: 1.5;
     }
@@ -444,7 +438,7 @@
         }
 
         .subtitle {
-            font-size: 1.3rem;
+            font-size: 1.4rem;
         }
 
         .process-section h2,
@@ -454,7 +448,7 @@
         }
 
         .section-intro {
-            font-size: 1.3rem;
+            font-size: 1.4rem;
         }
 
         .steps-container {
@@ -479,7 +473,7 @@
         }
 
         .faq-cta p {
-            font-size: 1.2rem;
+            font-size: 1.4rem;
         }
     }
 </style>

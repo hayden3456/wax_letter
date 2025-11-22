@@ -65,7 +65,7 @@
 
 <div class="payment-container">
     <div class="payment-card">
-        <h1>Complete Your Campaign</h1>
+        <h1>Complete Your Mail</h1>
         <p class="subtitle">You're one step away from sending your personalized wax-sealed letters!</p>
 
         <div class="order-summary">
@@ -160,7 +160,7 @@
     }
 
     .order-summary h2 {
-        font-size: 1.3rem;
+        font-size: 1.4rem;
         margin-bottom: 1rem;
         color: #333;
     }
@@ -190,7 +190,7 @@
     }
 
     .features-list h3 {
-        font-size: 1.1rem;
+        font-size: 1.4rem;
         margin-bottom: 1rem;
         color: #333;
     }
@@ -232,14 +232,14 @@
     }
 
     .small-text {
-        font-size: 0.875rem;
+        font-size: 1.4rem;
         margin-top: 0.5rem;
     }
 
     .btn-primary, .btn-secondary {
         padding: 1rem 2rem;
         border-radius: 8px;
-        font-size: 1rem;
+        font-size: 1.4rem;
         cursor: pointer;
         border: none;
         transition: all 0.3s ease;
@@ -271,7 +271,7 @@
     }
 
     .btn-primary.large {
-        font-size: 1.1rem;
+        font-size: 1.4rem;
         font-weight: 600;
     }
 

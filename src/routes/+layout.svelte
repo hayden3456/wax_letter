@@ -5,8 +5,25 @@
     import { auth } from '$lib/firebase';
     import { signOut } from 'firebase/auth';
     import { goto } from '$app/navigation';
+    import { onMount } from 'svelte';
+    import { browser } from '$app/environment';
 
 	let { children } = $props();
+
+    // Unregister any existing service workers to prevent 404 errors
+    onMount(() => {
+        if (browser && 'serviceWorker' in navigator) {
+            navigator.serviceWorker.getRegistrations().then(registrations => {
+                registrations.forEach(registration => {
+                    registration.unregister().then(() => {
+                        console.log('Service worker unregistered');
+                    }).catch(err => {
+                        console.warn('Failed to unregister service worker:', err);
+                    });
+                });
+            });
+        }
+    });
 
     async function handleLogout() {
         try {
@@ -48,7 +65,7 @@
             {:else}
                 <a href="/login">Login</a>
             {/if}
-            <button onclick={startNewCampaign} class="btn-primary-small" style="color: white;">Start Campaign</button>
+            <button onclick={startNewCampaign} class="btn-primary-small" style="color: white;">Create Your Mail</button>
         </div>
     </nav>
 </div>
@@ -87,7 +104,7 @@
     .footer-links a {
         color: var(--text-light);
         text-decoration: none;
-        font-size: 1rem;
+        font-size: 1.4rem;
         transition: color 0.2s;
     }
 
@@ -98,7 +115,7 @@
 
     .footer-links .separator {
         color: var(--border-color);
-        font-size: 0.9rem;
+        font-size: 1.4rem;
     }
 
     @media (max-width: 480px) {

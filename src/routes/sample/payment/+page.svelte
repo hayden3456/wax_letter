@@ -163,7 +163,7 @@
         padding: 0.5rem 1.5rem;
         border-radius: 20px;
         font-weight: bold;
-        font-size: 0.9rem;
+        font-size: 1.4rem;
     }
 
     h1 {
@@ -188,7 +188,7 @@
     }
 
     .order-summary h2 {
-        font-size: 1.3rem;
+        font-size: 1.4rem;
         margin-bottom: 1rem;
         color: #333;
     }
@@ -222,7 +222,7 @@
     }
 
     .pricing-explanation h3 {
-        font-size: 1.1rem;
+        font-size: 1.4rem;
         margin-bottom: 0.75rem;
         color: var(--primary-color, #8b4513);
     }
@@ -271,7 +271,7 @@
     }
 
     .features-list h3 {
-        font-size: 1.1rem;
+        font-size: 1.4rem;
         margin-bottom: 1rem;
         color: #333;
     }
@@ -339,14 +339,14 @@
     }
 
     .small-text {
-        font-size: 0.875rem;
+        font-size: 1.4rem;
         margin-top: 0.5rem;
     }
 
     .btn-primary, .btn-secondary {
         padding: 1rem 2rem;
         border-radius: 8px;
-        font-size: 1rem;
+        font-size: 1.4rem;
         cursor: pointer;
         border: none;
         transition: all 0.3s ease;
@@ -378,7 +378,7 @@
     }
 
     .btn-primary.large {
-        font-size: 1.1rem;
+        font-size: 1.4rem;
         font-weight: 600;
     }
 

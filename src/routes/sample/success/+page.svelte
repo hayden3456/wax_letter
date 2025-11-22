@@ -199,7 +199,7 @@
     }
 
     .success-message {
-        font-size: 1.1rem;
+        font-size: 1.4rem;
         color: #666;
         margin-bottom: 3rem;
         line-height: 1.6;
@@ -243,7 +243,7 @@
     }
 
     .timeline-content h3 {
-        font-size: 1.1rem;
+        font-size: 1.4rem;
         margin-bottom: 0.5rem;
         color: #333;
     }
@@ -262,7 +262,7 @@
     }
 
     .bulk-promo h3 {
-        font-size: 1.3rem;
+        font-size: 1.4rem;
         margin-bottom: 0.75rem;
     }
 
@@ -294,7 +294,7 @@
     }
 
     .small-text {
-        font-size: 0.9rem;
+        font-size: 1.4rem;
         color: #999;
         margin-top: 1rem;
     }
@@ -311,7 +311,7 @@
         padding-top: 2rem;
         border-top: 1px solid #eee;
         color: #999;
-        font-size: 0.9rem;
+        font-size: 1.4rem;
     }
 
     .support-info a {
@@ -327,7 +327,7 @@
     .btn-primary, .btn-secondary {
         padding: 1rem 2rem;
         border-radius: 8px;
-        font-size: 1rem;
+        font-size: 1.4rem;
         cursor: pointer;
         border: none;
         transition: all 0.3s ease;

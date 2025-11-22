@@ -1,11 +1,7 @@
 <script>
     import { appState } from '$lib/stores';
-    import { authStore } from '$lib/stores/authStore';
     import { createEventDispatcher } from 'svelte';
-    import { onMount } from 'svelte';
     import { browser } from '$app/environment';
-    import { get } from 'svelte/store';
-    import { saveStep1PreviewImage, loadStep1PreviewImage, deleteStep1PreviewImage } from '$lib/firestoreService';
 
     const dispatch = createEventDispatcher();
 
@@ -94,16 +90,6 @@
             return;
         }
 
-        // Delete old preview image from cloud before generating new one
-        try {
-            const $auth = get(authStore);
-            const userId = $auth.user?.uid || null;
-            await deleteStep1PreviewImage(userId).catch(() => {
-                // Ignore errors - image might not exist
-            });
-        } catch (e) {
-            // Ignore errors
-        }
 
         isGenerating = true;
         startLoadingAnimation();
@@ -135,13 +121,10 @@
                 const data = await response.json();
                 generatedImage = data.image;
                 
-                // Save to Firebase async (non-blocking, continues even if user leaves)
+                // Save AI letter image to campaign state (will be saved to campaign via auto-save)
                 if (generatedImage && browser) {
-                    const $auth = get(authStore);
-                    const userId = $auth.user?.uid || null;
-                    saveStep1PreviewImage(generatedImage, userId).catch(err => {
-                        console.warn('Failed to save preview to cloud (image still displayed):', err);
-                    });
+                    $appState.aiLetterImage = generatedImage;
+                    console.log('✅ AI letter image saved to campaign state');
                 }
             } else {
                 console.error('Failed to generate seal preview');
@@ -154,30 +137,46 @@
         }
     }
 
-    // Load saved preview image from Firebase on mount
-    onMount(async () => {
-        if (!browser) return;
+    // Track campaign ID to detect when it changes
+    let lastCampaignId = $appState.campaignId;
+    
+    // Load saved preview image from campaign state (reactive - updates when campaign loads)
+    $: if (browser) {
+        // Reset generatedImage if campaign changed
+        if ($appState.campaignId !== lastCampaignId) {
+            generatedImage = null;
+            lastCampaignId = $appState.campaignId;
+        }
         
-        // Only load if we have a stamp image but no generated image yet
-        if ($appState.stampImage && !generatedImage) {
-            try {
-                const $auth = get(authStore);
-                const userId = $auth.user?.uid || null;
-                const cloudImage = await loadStep1PreviewImage(userId);
-                if (cloudImage) {
-                    generatedImage = cloudImage;
-                    console.log('✅ Loaded Step1 preview image from Firebase');
-                }
-            } catch (e) {
-                console.warn('Failed to load preview from cloud:', e);
+        // Load AI letter image from campaign state (same way logos are loaded)
+        if (!generatedImage) {
+            if ($appState.aiLetterImageUrl) {
+                generatedImage = $appState.aiLetterImageUrl;
+                console.log('✅ Loaded AI letter image URL from campaign');
+            }
+            // Also check if campaign has the data URL stored
+            else if ($appState.aiLetterImage) {
+                generatedImage = $appState.aiLetterImage;
+                console.log('✅ Loaded AI letter image from campaign state');
             }
         }
-    });
+    }
 </script>
 
 <div class="step-container">
     <h2>Step 1: Upload Your Stamp Pattern</h2>
     <p class="step-description">Upload your logo or design for the wax seal. SVG format is preferred for best quality.</p>
+
+    <div class="campaign-name-section">
+        <label for="campaignName">Title</label>
+        <input 
+            id="campaignName"
+            type="text" 
+            bind:value={$appState.name}
+            placeholder="To find this group of mail in the future..."
+            class="campaign-name-input"
+        />
+    </div>
 
     <!-- svelte-ignore a11y-click-events-have-key-events -->
     <!-- svelte-ignore a11y-no-static-element-interactions -->
@@ -202,26 +201,17 @@
 
     {#if $appState.stampImage}
         <div class="preview-section" id="stampPreviewSection">
-            <h3>Your Wax Seal Preview</h3>
+            <h3>Your Logo</h3>
             
-            <!-- Sealed Envelope -->
-            <div class="sealed-envelope">
-                <div class="envelope-flap"></div>
-                <div class="envelope-body">
-                    <div class="envelope-address-lines">
-                        <div class="address-line"></div>
-                        <div class="address-line"></div>
-                        <div class="address-line short"></div>
-                    </div>
-                </div>
-                <div class="envelope-wax-seal">
-                    <img src={$appState.stampImage} alt="Your stamp preview">
-                </div>
+            <!-- Uploaded Logo Display -->
+            <div class="uploaded-logo-container">
+                <img src={$appState.stampImage} alt="Your stamp preview" class="uploaded-logo">
             </div>
 
-            <!-- Homepage Letter Mockup -->
+            <!-- Wax Seal Preview -->
             <div class="homepage-mockup">
-                <h4>How it looks on your letter:</h4>
+                <h3>Wax Seal Preview</h3>
+                <h4 class="patience-message">Please be patient, due to high demand this is taking a while to load properly</h4>
                 <div class="real-image-container">
                     {#if generatedImage}
                         <img src={generatedImage} alt="Wax Sealed Letter with Custom Logo" class="hero-img generated">
@@ -237,7 +227,7 @@
                     {/if}
                 </div>
                 {#if generatedImage}
-                    <p class="ai-disclaimer">This is AI-generated and won't show the actual wax seal.</p>
+                    <p class="ai-disclaimer">This is AI-generated. Not the actual wax seal. When you order we will get approval of the wax seal design via email.</p>
                 {/if}
             </div>
 
@@ -311,7 +301,7 @@
     .ai-disclaimer {
         text-align: center;
         color: var(--text-muted);
-        font-size: 0.9rem;
+        font-size: 1.4rem;
         font-style: italic;
         margin-top: 1rem;
         padding: 0.5rem;
@@ -326,7 +316,68 @@
     .homepage-mockup h4 {
         text-align: center;
         margin-bottom: 1rem;
-        font-size: 1.2rem;
+        font-size: 1.4rem;
         color: var(--text-color);
+    }
+
+    .uploaded-logo-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin: 2rem 0;
+        padding: 2rem;
+        background: rgba(0,0,0,0.02);
+        border-radius: 10px;
+    }
+
+    .uploaded-logo {
+        max-width: 300px;
+        max-height: 300px;
+        width: auto;
+        height: auto;
+        object-fit: contain;
+    }
+
+    .patience-message {
+        text-align: center;
+        color: var(--text-muted);
+        font-size: 1.2rem;
+        font-style: italic;
+        margin-bottom: 1.5rem;
+        padding: 0.5rem;
+    }
+
+    .campaign-name-section {
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background: var(--card-background);
+        border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
+        border: 2px solid var(--border-color);
+    }
+
+    .campaign-name-section label {
+        display: block;
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+        color: var(--text-color);
+    }
+
+    .campaign-name-input {
+        width: 100%;
+        padding: 0.75rem;
+        font-size: 1.4rem;
+        border: 2px solid var(--border-color);
+        border-radius: 8px;
+        box-sizing: border-box;
+        transition: border-color 0.3s;
+    }
+
+    .campaign-name-input:focus {
+        outline: none;
+        border-color: var(--primary-color);
+    }
+
+    .campaign-name-input::placeholder {
+        color: #999;
     }
 </style>
