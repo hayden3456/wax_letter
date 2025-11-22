@@ -5,7 +5,7 @@
     import { page } from '$app/stores';
     import { authStore } from '$lib/stores/authStore';
     import { appState } from '$lib/stores';
-    import { associateCampaignWithUser } from '$lib/firestoreService';
+    import { associateCampaignWithUser, associateCampaignsBySessionId } from '$lib/firestoreService';
     import { browser } from '$app/environment';
     import { onMount } from 'svelte';
 
@@ -51,22 +51,42 @@
                 userCredential = await signInWithEmailAndPassword(auth, email, password);
             }
             
-            // Associate pending campaign with user (works for both signup and signin)
+            // Associate anonymous campaigns with user (works for both signup and signin)
             if (browser && userCredential) {
-                const pendingAssociation = localStorage.getItem('pendingCampaignAssociation');
-                const campaignId = localStorage.getItem('waxseal_campaignId');
-                
-                if (pendingAssociation === 'true' && campaignId && campaignId !== 'draft') {
-                    try {
+                try {
+                    // Get session ID from sessionStorage (cloud-based tracking)
+                    const sessionId = sessionStorage.getItem('anonymous_session_id');
+                    
+                    // Also check for specific campaign ID in localStorage (backward compatibility)
+                    const campaignId = localStorage.getItem('waxseal_campaignId');
+                    const pendingAssociation = localStorage.getItem('pendingCampaignAssociation');
+                    
+                    // Associate campaigns by session ID (primary method - cloud-based)
+                    if (sessionId) {
+                        const count = await associateCampaignsBySessionId(sessionId, userCredential.user.uid);
+                        if (count > 0) {
+                            console.log(`✅ Associated ${count} draft campaign(s) with ${isSignUp ? 'new' : 'existing'} user account`);
+                        }
+                        // Clear session ID after association
+                        sessionStorage.removeItem('anonymous_session_id');
+                    }
+                    
+                    // Also handle specific campaign association (backward compatibility)
+                    if (pendingAssociation === 'true' && campaignId && campaignId !== 'draft') {
                         await associateCampaignWithUser(campaignId, userCredential.user.uid);
                         // Update the appState with userId
                         appState.update(s => ({ ...s, userId: userCredential.user.uid }));
-                        console.log(`✅ Campaign associated with ${isSignUp ? 'new' : 'existing'} user account`);
-                    } catch (error) {
-                        console.error('Failed to associate campaign:', error);
+                        console.log(`✅ Campaign ${campaignId} associated with user account`);
+                        // Clear the pending flag
+                        localStorage.removeItem('pendingCampaignAssociation');
+                    } else {
+                        // Update appState with userId even if no specific campaign
+                        appState.update(s => ({ ...s, userId: userCredential.user.uid }));
                     }
-                    // Clear the pending flag
-                    localStorage.removeItem('pendingCampaignAssociation');
+                } catch (error) {
+                    console.error('Failed to associate campaigns:', error);
+                    // Still update appState with userId
+                    appState.update(s => ({ ...s, userId: userCredential.user.uid }));
                 }
             }
             // Redirect handled by reactive statement above

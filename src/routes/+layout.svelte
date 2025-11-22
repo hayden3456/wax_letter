@@ -7,6 +7,7 @@
     import { goto } from '$app/navigation';
     import { onMount } from 'svelte';
     import { browser } from '$app/environment';
+    import { page } from '$app/stores';
 
 	let { children } = $props();
 
@@ -54,18 +55,18 @@
             </a>
         </div>
         <div class="nav-links">
-            <a href="/pricing">Pricing</a>
-            <a href="/faq">FAQ</a>
+            <a href="/pricing" class:active={$page.url.pathname === '/pricing'}>Pricing</a>
+            <a href="/faq" class:active={$page.url.pathname === '/faq'}>FAQ</a>
             {#if $authStore.loading}
                 <!-- Show nothing or a small spinner -->
             {:else if $authStore.user}
-                <a href="/dashboard">Dashboard</a>
-                <a href="/profile">Profile</a>
+                <a href="/dashboard" class:active={$page.url.pathname === '/dashboard'}>Dashboard</a>
+                <a href="/profile" class:active={$page.url.pathname === '/profile'}>Profile</a>
                 <button class="btn-link" onclick={handleLogout}>Logout</button>
             {:else}
                 <a href="/login">Login</a>
             {/if}
-            <button onclick={startNewCampaign} class="btn-primary-small" style="color: white;">Create Your Mail</button>
+            <button onclick={startNewCampaign} class="btn-primary-small" class:active={$page.url.pathname.startsWith('/campaign')}>Create Your Mail</button>
         </div>
     </nav>
 </div>

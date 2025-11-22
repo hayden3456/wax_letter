@@ -151,6 +151,15 @@ body {
     transform: scaleX(1);
 }
 
+.nav-links a.active {
+    color: var(--primary-color);
+}
+
+.nav-links .btn-primary-small.active {
+    background-color: var(--primary-color);
+    border-color: var(--primary-dark);
+}
+
 /* Progress Bar */
 .progress-container {
     background-color: var(--card-background);

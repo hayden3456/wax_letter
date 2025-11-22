@@ -25,6 +25,17 @@ import { ref, uploadString, getDownloadURL, deleteObject } from 'firebase/storag
 export async function createCampaign(campaignData) {
     try {
         const campaignRef = doc(collection(db, 'campaigns'));
+        
+        // If no userId, get/create an anonymous session ID to track this campaign
+        let sessionId = null;
+        if (!campaignData.userId) {
+            try {
+                sessionId = await getOrCreateAnonymousSessionId();
+            } catch (error) {
+                console.warn('Failed to get session ID, continuing without it:', error);
+            }
+        }
+
         const campaign = {
             ...campaignData,
             createdAt: serverTimestamp(),
@@ -32,6 +43,8 @@ export async function createCampaign(campaignData) {
             status: 'draft',
             // Include userId if present in campaignData
             userId: campaignData.userId || null,
+            // Store session ID for anonymous campaigns (so we can associate them later)
+            sessionId: sessionId || null,
             // Add recipient count for easier querying
             recipientCount: campaignData.addresses?.length || 0,
             // Add a campaign name if not provided
@@ -229,7 +242,26 @@ export async function saveCampaignState(campaignId, state) {
             return await createCampaign(state);
         } else {
             // Update existing campaign
-            await updateCampaign(campaignId, state);
+            const updates = { ...state };
+            
+            // If campaign doesn't have userId, ensure it has a sessionId for tracking
+            if (!updates.userId) {
+                // Check if campaign already has a sessionId
+                const existingCampaign = await getCampaign(campaignId);
+                if (!existingCampaign?.sessionId) {
+                    // Campaign doesn't have sessionId, add one
+                    try {
+                        updates.sessionId = await getOrCreateAnonymousSessionId();
+                    } catch (error) {
+                        console.warn('Failed to get session ID for update, continuing without it:', error);
+                    }
+                } else {
+                    // Preserve existing sessionId
+                    updates.sessionId = existingCampaign.sessionId;
+                }
+            }
+            
+            await updateCampaign(campaignId, updates);
             return campaignId;
         }
     } catch (error) {
@@ -261,6 +293,128 @@ export async function associateCampaignWithUser(campaignId, userId) {
     } catch (error) {
         console.error('Error associating campaign with user:', error);
         throw error;
+    }
+}
+
+/**
+ * Get or create an anonymous session ID stored in Firestore
+ * This allows us to track campaigns created by anonymous users
+ * @returns {Promise<string>} - The session ID
+ */
+export async function getOrCreateAnonymousSessionId() {
+    try {
+        // Check if we have a session ID stored in browser (as a cache)
+        if (typeof window !== 'undefined') {
+            const cachedSessionId = sessionStorage.getItem('anonymous_session_id');
+            if (cachedSessionId) {
+                // Verify it exists in Firestore
+                try {
+                    const sessionRef = doc(db, 'anonymous_sessions', cachedSessionId);
+                    const sessionSnap = await getDoc(sessionRef);
+                    if (sessionSnap.exists()) {
+                        return cachedSessionId;
+                    }
+                } catch (e) {
+                    // Session doesn't exist, create new one
+                }
+            }
+        }
+
+        // Create new session document in Firestore
+        const sessionRef = doc(collection(db, 'anonymous_sessions'));
+        const sessionId = sessionRef.id;
+        
+        await setDoc(sessionRef, {
+            createdAt: serverTimestamp(),
+            lastAccessed: serverTimestamp()
+        });
+
+        // Cache in sessionStorage for quick access
+        if (typeof window !== 'undefined') {
+            sessionStorage.setItem('anonymous_session_id', sessionId);
+        }
+
+        console.log('✅ Created anonymous session:', sessionId);
+        return sessionId;
+    } catch (error) {
+        console.error('Error creating anonymous session:', error);
+        // Fallback: generate a temporary ID (won't persist across devices)
+        const fallbackId = `temp_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
+        if (typeof window !== 'undefined') {
+            sessionStorage.setItem('anonymous_session_id', fallbackId);
+        }
+        return fallbackId;
+    }
+}
+
+/**
+ * Find and associate all campaigns with a given session ID to a user
+ * @param {string} sessionId - The anonymous session ID
+ * @param {string} userId - The user ID to associate with
+ * @returns {Promise<number>} - Number of campaigns associated
+ */
+export async function associateCampaignsBySessionId(sessionId, userId) {
+    try {
+        if (!sessionId || !userId) {
+            return 0;
+        }
+
+        // Find all campaigns with this session ID and no userId
+        const q = query(
+            collection(db, 'campaigns'),
+            where('sessionId', '==', sessionId),
+            where('userId', '==', null)
+        );
+
+        const querySnapshot = await getDocs(q);
+        const campaignsToAssociate = [];
+        
+        querySnapshot.forEach((doc) => {
+            campaignsToAssociate.push(doc.id);
+        });
+
+        // Associate all found campaigns
+        const promises = campaignsToAssociate.map(campaignId => 
+            associateCampaignWithUser(campaignId, userId)
+        );
+
+        await Promise.all(promises);
+
+        console.log(`✅ Associated ${campaignsToAssociate.length} campaigns with user ${userId}`);
+        return campaignsToAssociate.length;
+    } catch (error) {
+        console.error('Error associating campaigns by session ID:', error);
+        // If query fails (e.g., index not created), try fallback approach
+        try {
+            // Fallback: find campaigns created recently without userId
+            // This is less precise but works as a backup
+            const allCampaignsQuery = query(collection(db, 'campaigns'));
+            const allSnapshot = await getDocs(allCampaignsQuery);
+            const recentUnclaimed = [];
+            const oneDayAgo = Date.now() - (24 * 60 * 60 * 1000);
+
+            allSnapshot.forEach((doc) => {
+                const data = doc.data();
+                const createdAt = data.createdAt?.toDate?.() || new Date(data.createdAt);
+                if (!data.userId && 
+                    (data.sessionId === sessionId || createdAt.getTime() > oneDayAgo)) {
+                    recentUnclaimed.push(doc.id);
+                }
+            });
+
+            // Limit to reasonable number to avoid associating wrong campaigns
+            const campaignsToAssociate = recentUnclaimed.slice(0, 10);
+            const promises = campaignsToAssociate.map(campaignId => 
+                associateCampaignWithUser(campaignId, userId)
+            );
+
+            await Promise.all(promises);
+            console.log(`✅ Associated ${campaignsToAssociate.length} campaigns (fallback method)`);
+            return campaignsToAssociate.length;
+        } catch (fallbackError) {
+            console.error('Fallback association also failed:', fallbackError);
+            return 0;
+        }
     }
 }
 

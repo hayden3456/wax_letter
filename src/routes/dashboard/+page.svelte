@@ -119,11 +119,9 @@
                     console.log(`📊 Total campaigns in database: ${allCampaigns.length}`);
                     console.log('Campaign userIds:', allCampaigns.map(c => ({ id: c.id, userId: c.userId })));
                     
-                    // Show campaigns that match this user OR have no userId
-                    const userCampaigns = allCampaigns.filter(c => c.userId === uid);
-                    unclaimedCampaigns = allCampaigns.filter(c => !c.userId);
-                    campaigns = [...userCampaigns, ...unclaimedCampaigns];
-                    console.log(`✅ Showing ${userCampaigns.length} user campaigns + ${unclaimedCampaigns.length} unclaimed campaigns`);
+                    // Only show campaigns that belong to this user
+                    campaigns = allCampaigns.filter(c => c.userId === uid);
+                    console.log(`✅ Showing ${campaigns.length} campaigns for user ${uid}`);
                 } catch (allError) {
                     console.error("Failed to load any campaigns:", allError);
                 }
