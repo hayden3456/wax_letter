@@ -6,152 +6,280 @@
 
     const dispatch = createEventDispatcher();
 
-    let letterBodyTextarea;
-    let previewContent = { subject: '', body: '' };
+    let editor;
+    let showPreview = false;
     let isGeneratingPDF = false;
+    
+    // Track cursor position for inserting at caret
+    let lastSavedRange = null;
 
-    // Add more placeholder options
     const placeholders = [
-        { name: 'FirstName', label: '{{FirstName}}' },
-        { name: 'LastName', label: '{{LastName}}' },
-        { name: 'FullName', label: '{{FullName}}' },
-        { name: 'Company', label: '{{Company}}' },
-        { name: 'Address', label: '{{Address}}' },
-        { name: 'City', label: '{{City}}' },
-        { name: 'State', label: '{{State}}' },
-        { name: 'Zip', label: '{{Zip}}' }
+        { name: 'FirstName', label: 'First Name' },
+        { name: 'LastName', label: 'Last Name' },
+        { name: 'FullName', label: 'Full Name' },
+        { name: 'Company', label: 'Company' }
     ];
 
-    function insertPlaceholder(placeholder) {
-        if (!letterBodyTextarea) return;
-        
-        const start = letterBodyTextarea.selectionStart;
-        const end = letterBodyTextarea.selectionEnd;
-        const text = $appState.letter.body;
-
-        $appState.letter.body = text.substring(0, start) + placeholder + text.substring(end);
-        
-        // Need to wait for DOM update to set focus and selection
-        setTimeout(() => {
-            letterBodyTextarea.focus();
-            letterBodyTextarea.selectionStart = letterBodyTextarea.selectionEnd = start + placeholder.length;
-        }, 0);
-    }
+    const sampleData = {
+        'FirstName': 'John',
+        'LastName': 'Doe',
+        'FullName': 'John Doe',
+        'Company': 'Acme Corp'
+    };
 
     onMount(() => {
-        if (browser && $appState.letter) {
-            previewContent = getPreviewContent($appState.letter);
+        if (browser) {
+            // Initialize with default content if empty
+            if (!$appState.letter.body || $appState.letter.body.trim() === '') {
+                $appState.letter.body = `Dear {{FirstName}},
+
+Write your letter content here...
+
+Sincerely,
+[Your Name]`;
+            }
+            renderEditorContent();
         }
     });
 
-    $: if (browser && $appState.letter) {
-        previewContent = getPreviewContent($appState.letter);
+    // Watch for external updates to letter body (e.g. reset)
+    // But avoid re-rendering if we are the ones editing
+    let lastInternalUpdate = '';
+    $: if (browser && $appState.letter.body !== lastInternalUpdate && !showPreview && editor) {
+        // Only update if significantly different to avoid cursor jumping
+        // For now, we trust the editor's internal state while editing
+        // renderEditorContent(); 
     }
 
-    function getPreviewContent(letter) {
-        if (!letter) {
-            return { subject: '', body: '' };
-        }
+    function escapeHtml(text) {
+        if (!text) return '';
+        return text
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+    }
 
-        const sampleData = {
-            '{{FirstName}}': 'John',
-            '{{LastName}}': 'Doe',
-            '{{FullName}}': 'John Doe',
-            '{{Company}}': 'Acme Corp',
-            '{{Address}}': '123 Main Street',
-            '{{City}}': 'New York',
-            '{{State}}': 'NY',
-            '{{Zip}}': '10001'
-        };
-
-        let previewSubject = letter.subject || '';
-        let previewBody = letter.body || '';
-        let previewClosing = letter.closing || '';
-        let previewSignature = letter.signature || '';
-
-        Object.keys(sampleData).forEach(key => {
-            const regex = new RegExp(key.replace(/[{}]/g, '\\$&'), 'g');
-            previewSubject = previewSubject.replace(regex, sampleData[key]);
-            previewBody = previewBody.replace(regex, sampleData[key]);
+    function renderEditorContent() {
+        if (!editor) return;
+        
+        const text = $appState.letter.body || '';
+        
+        // Escape HTML first to treat everything as text
+        let html = escapeHtml(text);
+        
+        // Replace newlines with <br>
+        html = html.replace(/\n/g, '<br>');
+        
+        // Replace {{Key}} with pills
+        placeholders.forEach(p => {
+            const regex = new RegExp(`{{${p.name}}}`, 'g');
+            const pillHtml = `<span class="placeholder-pill" contenteditable="false" data-val="${p.name}">${p.name}</span>`;
+            html = html.replace(regex, pillHtml);
         });
 
-        return { 
-            subject: previewSubject, 
-            body: previewBody,
-            closing: previewClosing,
-            signature: previewSignature
-        };
+        editor.innerHTML = html;
+    }
+
+    function updateStoreFromEditor() {
+        if (showPreview || !editor) return;
+
+        let text = '';
+        
+        // Helper to traverse nodes and build text
+        function parseNode(node) {
+            if (node.nodeType === Node.TEXT_NODE) {
+                text += node.textContent;
+            } else if (node.nodeType === Node.ELEMENT_NODE) {
+                if (node.classList.contains('placeholder-pill')) {
+                    text += '{{' + node.dataset.val + '}}';
+                } else if (node.tagName === 'BR') {
+                    text += '\n';
+                } else if (node.tagName === 'DIV') {
+                    // Chrome/Firefox use divs for lines. 
+                    // If it's not the first line, prepend newline
+                    // Actually, usually div means "new line started here"
+                    text += '\n'; 
+                    node.childNodes.forEach(parseNode);
+                } else {
+                    node.childNodes.forEach(parseNode);
+                }
+            }
+        }
+
+        // Handle the editor's children
+        editor.childNodes.forEach(parseNode);
+
+        // Clean up: remove leading newline if it was added by the first div (common contenteditable quirk)
+        // But be careful not to remove user's intentional newlines.
+        // A simple trim() might be too aggressive for intended whitespace, but for a letter body it's usually fine.
+        // Let's just trim the start/end.
+        const newBody = text.trim();
+        
+        lastInternalUpdate = newBody;
+        $appState.letter.body = newBody;
+    }
+
+    function handleInput() {
+        saveSelection();
+        updateStoreFromEditor();
+    }
+
+    function saveSelection() {
+        const sel = window.getSelection();
+        if (sel.rangeCount > 0) {
+            lastSavedRange = sel.getRangeAt(0);
+        }
+    }
+
+    function restoreSelection() {
+        if (lastSavedRange) {
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(lastSavedRange);
+        } else if (editor) {
+            editor.focus();
+        }
+    }
+
+    function insertPlaceholder(name) {
+        if (showPreview) return;
+        
+        // Ensure editor has focus or use last saved range
+        if (!lastSavedRange || (lastSavedRange.commonAncestorContainer !== editor && !editor.contains(lastSavedRange.commonAncestorContainer))) {
+            editor.focus();
+        } else {
+            restoreSelection();
+        }
+
+        const pill = document.createElement('span');
+        pill.className = 'placeholder-pill';
+        pill.contentEditable = 'false';
+        pill.dataset.val = name;
+        pill.innerText = name;
+        
+        // Insert space after
+        const space = document.createTextNode('\u00A0');
+
+        const sel = window.getSelection();
+        if (sel.rangeCount > 0) {
+            const range = sel.getRangeAt(0);
+            range.deleteContents();
+            range.insertNode(space);
+            range.insertNode(pill);
+            
+            // Move cursor after space
+            range.setStartAfter(space);
+            range.setEndAfter(space);
+            sel.removeAllRanges();
+            sel.addRange(range);
+            
+            saveSelection();
+            updateStoreFromEditor();
+        }
+    }
+
+    // Drag and Drop Handlers
+    function handleDragStart(e, name) {
+        e.dataTransfer.setData('text/plain', '{{' + name + '}}');
+        e.dataTransfer.setData('application/x-wax-placeholder', name);
+        e.dataTransfer.effectAllowed = 'copy';
+    }
+
+    function handleDragOver(e) {
+        if (showPreview) return;
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'copy';
+    }
+
+    function handleDrop(e) {
+        if (showPreview) return;
+        e.preventDefault();
+        
+        const name = e.dataTransfer.getData('application/x-wax-placeholder');
+        if (name) {
+            // Insert at drop position
+            let range;
+            if (document.caretRangeFromPoint) {
+                range = document.caretRangeFromPoint(e.clientX, e.clientY);
+            } else if (e.rangeParent) {
+                range = document.createRange();
+                range.setStart(e.rangeParent, e.rangeOffset);
+                range.setEnd(e.rangeParent, e.rangeOffset);
+            }
+
+            if (range) {
+                const sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(range);
+                insertPlaceholder(name);
+            }
+        }
+    }
+
+    function togglePreview() {
+        showPreview = !showPreview;
+        if (showPreview) {
+            // Render Preview
+            let text = $appState.letter.body;
+            // Replace placeholders with sample data
+            Object.keys(sampleData).forEach(key => {
+                const regex = new RegExp(`{{${key}}}`, 'g');
+                text = text.replace(regex, sampleData[key]);
+            });
+            
+            editor.innerHTML = escapeHtml(text).replace(/\n/g, '<br>');
+            editor.contentEditable = 'false';
+        } else {
+            // Render Edit Mode
+            editor.contentEditable = 'true';
+            renderEditorContent();
+        }
     }
 
     function generatePDF() {
         if (!browser) return;
-        
         isGeneratingPDF = true;
         
         try {
             const doc = new jsPDF();
-            
-            // Set up document margins and dimensions
-            const pageWidth = doc.internal.pageSize.getWidth();
-            const pageHeight = doc.internal.pageSize.getHeight();
             const margin = 25;
+            const pageWidth = doc.internal.pageSize.getWidth();
             const maxWidth = pageWidth - (margin * 2);
             let yPosition = margin;
 
-            // Add subject/greeting
-            if (previewContent.subject) {
-                doc.setFontSize(12);
-                doc.setFont('times', 'normal');
-                const subjectLines = doc.splitTextToSize(previewContent.subject, maxWidth);
-                doc.text(subjectLines, margin, yPosition);
-                yPosition += subjectLines.length * 7 + 10;
-            }
+            // Prepare content with sample data
+            let body = $appState.letter.body || '';
+
+            Object.keys(sampleData).forEach(key => {
+                const regex = new RegExp(`{{${key}}}`, 'g');
+                body = body.replace(regex, sampleData[key]);
+            });
 
             // Add body
-            if (previewContent.body) {
+            if (body) {
                 doc.setFontSize(11);
                 doc.setFont('times', 'normal');
-                const bodyLines = doc.splitTextToSize(previewContent.body, maxWidth);
+                const lines = doc.splitTextToSize(body, maxWidth);
                 
-                // Check if we need to handle page breaks
-                for (let i = 0; i < bodyLines.length; i++) {
+                const pageHeight = doc.internal.pageSize.getHeight();
+
+                lines.forEach(line => {
                     if (yPosition > pageHeight - margin) {
                         doc.addPage();
                         yPosition = margin;
                     }
-                    doc.text(bodyLines[i], margin, yPosition);
+                    doc.text(line, margin, yPosition);
                     yPosition += 7;
-                }
+                });
                 yPosition += 10;
             }
 
-            // Add closing
-            if (previewContent.closing) {
-                if (yPosition > pageHeight - margin - 20) {
-                    doc.addPage();
-                    yPosition = margin;
-                }
-                doc.setFontSize(11);
-                doc.text(previewContent.closing, margin, yPosition);
-                yPosition += 10;
-            }
-
-            // Add signature
-            if (previewContent.signature) {
-                if (yPosition > pageHeight - margin - 20) {
-                    doc.addPage();
-                    yPosition = margin;
-                }
-                doc.setFontSize(11);
-                doc.setFont('times', 'italic');
-                doc.text(previewContent.signature, margin, yPosition);
-            }
-
-            // Save the PDF
             doc.save('letter-preview.pdf');
         } catch (error) {
-            console.error('Error generating PDF:', error);
-            alert('There was an error generating the PDF. Please try again.');
+            console.error(error);
+            alert('Error generating PDF');
         } finally {
             isGeneratingPDF = false;
         }
@@ -160,127 +288,59 @@
 
 <div class="step-container">
     <h2>Step 3: Compose Your Letter</h2>
-    <p class="step-description">Write the content that will be printed on each letter. Use placeholders for personalization.</p>
+    <p class="step-description">Drag and drop placeholders to personalize your letter.</p>
 
-    <div class="letter-composer-wrapper">
-        <div class="letter-composer">
-            <div class="placeholder-help">
-                <strong>Available Placeholders (click to insert):</strong>
-                <div class="placeholder-grid">
-                    {#each placeholders as placeholder}
-                        <!-- svelte-ignore a11y-click-events-have-key-events -->
-                        <!-- svelte-ignore a11y-no-static-element-interactions -->
-                        <span 
-                            class="placeholder-tag" 
-                            on:click={() => insertPlaceholder(placeholder.label)}
-                            title="Click to insert {placeholder.label}"
-                        >
-                            {placeholder.label}
-                        </span>
-                    {/each}
-                </div>
-            </div>
-
-            <div class="form-group">
-                <label for="letterSubject">
-                    Subject / Greeting
-                    <span class="field-hint">e.g., "Dear &#123;&#123;FirstName&#125;&#125;,"</span>
-                </label>
-                <input 
-                    type="text" 
-                    id="letterSubject" 
-                    bind:value={$appState.letter.subject} 
-                    placeholder="Dear &#123;&#123;FirstName&#125;&#125;,"
-                    class="letter-input"
-                >
-            </div>
-
-            <div class="form-group">
-                <label for="letterBody">
-                    Letter Body
-                    <span class="field-hint">The main content of your letter</span>
-                </label>
-                <textarea 
-                    id="letterBody" 
-                    bind:this={letterBodyTextarea}
-                    bind:value={$appState.letter.body} 
-                    rows="15" 
-                    placeholder="Write your letter content here... Use placeholders to personalize each letter."
-                    class="letter-textarea"
-                ></textarea>
-            </div>
-
-            <div class="form-row">
-                <div class="form-group">
-                    <label for="letterClosing">
-                        Closing
-                        <span class="field-hint">e.g., "Sincerely," or "Best regards,"</span>
-                    </label>
-                    <input 
-                        type="text" 
-                        id="letterClosing" 
-                        bind:value={$appState.letter.closing} 
-                        placeholder="Sincerely,"
-                        class="letter-input"
+    <div class="wysiwyg-container">
+        <!-- Left Sidebar: Placeholders -->
+        <div class="sidebar">
+            <h3>Available Placeholders</h3>
+            <p class="sidebar-hint">Drag or click to insert</p>
+            <div class="placeholder-list">
+                {#each placeholders as p}
+                    <!-- svelte-ignore a11y-click-events-have-key-events -->
+                    <!-- svelte-ignore a11y-no-static-element-interactions -->
+                    <div 
+                        class="placeholder-item" 
+                        draggable="true"
+                        on:dragstart={(e) => handleDragStart(e, p.name)}
+                        on:click={() => insertPlaceholder(p.name)}
                     >
-                </div>
-
-                <div class="form-group">
-                    <label for="letterSignature">
-                        Signature Name
-                        <span class="field-hint">Your name or company name</span>
-                    </label>
-                    <input 
-                        type="text" 
-                        id="letterSignature" 
-                        bind:value={$appState.letter.signature} 
-                        placeholder="Your Name or Company"
-                        class="letter-input"
-                    >
-                </div>
+                        <span class="icon">+</span> {p.label}
+                    </div>
+                {/each}
             </div>
         </div>
 
-        <div class="letter-preview-panel">
-            <div class="preview-header">
-                <h4>Live Preview</h4>
-                <button 
-                    class="btn-download-pdf" 
-                    on:click={generatePDF}
-                    disabled={!$appState.letter.body.trim() || isGeneratingPDF}
-                    title="Download PDF preview of your letter"
-                >
-                    {#if isGeneratingPDF}
-                        <span class="spinner">⏳</span> Generating...
-                    {:else}
-                        📄 Download PDF
-                    {/if}
+        <!-- Right Side: Editor -->
+        <div class="editor-area">
+            <!-- Toolbar -->
+            <div class="editor-toolbar">
+                <div class="toggle-wrapper">
+                    <label class="toggle-switch">
+                        <input type="checkbox" checked={showPreview} on:change={togglePreview}>
+                        <span class="slider round"></span>
+                    </label>
+                    <span class="toggle-label">{showPreview ? 'Viewing Preview' : 'View With Placeholders'}</span>
+                </div>
+
+                <button class="btn-text" on:click={generatePDF} disabled={isGeneratingPDF}>
+                    {#if isGeneratingPDF}⏳{:else}📄{/if} Download PDF
                 </button>
             </div>
-            <p class="preview-note">This is how your letter will look with sample data:</p>
-            <div class="preview-letter">
-                <div class="preview-content">
-                    {#if previewContent.subject}
-                        <p class="preview-greeting">{previewContent.subject}</p>
-                    {:else}
-                        <p class="preview-placeholder">Add a greeting...</p>
-                    {/if}
-                    
-                    {#if previewContent.body}
-                        <p class="preview-body">{previewContent.body}</p>
-                    {:else}
-                        <p class="preview-placeholder">Write your letter body...</p>
-                    {/if}
-                    
-                    {#if $appState.letter.closing}
-                        <p class="preview-closing">{$appState.letter.closing}</p>
-                    {/if}
-                    
-                    {#if $appState.letter.signature}
-                        <p class="preview-signature">{$appState.letter.signature}</p>
-                    {/if}
-                </div>
-            </div>
+
+            <!-- Main Editor -->
+            <div 
+                class="rich-editor {showPreview ? 'preview-mode' : ''}"
+                bind:this={editor}
+                contenteditable="true"
+                on:input={handleInput}
+                on:dragover={handleDragOver}
+                on:drop={handleDrop}
+                on:click={saveSelection}
+                on:keyup={saveSelection}
+                role="textbox"
+                tabindex="0"
+            ></div>
         </div>
     </div>
 
@@ -289,7 +349,7 @@
         <button 
             class="btn-primary" 
             on:click={() => dispatch('next')} 
-            disabled={!$appState.letter.body.trim()}
+            disabled={!$appState.letter.body || $appState.letter.body.trim().length === 0}
         >
             Next: Review Mail
         </button>
@@ -297,234 +357,224 @@
 </div>
 
 <style>
-    .letter-composer-wrapper {
+    .wysiwyg-container {
         display: grid;
-        grid-template-columns: 1.2fr 1fr;
-        gap: 2.5rem;
+        grid-template-columns: 250px 1fr;
+        gap: 2rem;
         margin: 2rem 0;
+        align-items: start;
     }
 
-    .placeholder-help {
+    /* Sidebar */
+    .sidebar {
         background: var(--background-color);
-        padding: 1rem;
-        border-radius: 8px;
-        margin-bottom: 1.5rem;
-    }
-
-    .placeholder-help strong {
-        display: block;
-        margin-bottom: 0.75rem;
-        color: var(--text-color);
-        font-size: 1.4rem;
-    }
-
-    .placeholder-grid {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-    }
-
-    .placeholder-tag {
-        display: inline-block;
-        background: var(--primary-color);
-        color: white;
-        padding: 0.4rem 0.8rem;
-        border-radius: 4px;
-        cursor: pointer;
-        font-size: 1.4rem;
-        font-family: 'Courier New', monospace;
-        transition: all 0.2s;
-    }
-
-    .placeholder-tag:hover {
-        background: var(--primary-dark);
-        transform: translateY(-2px);
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    }
-
-    .form-group {
-        margin-bottom: 1.2rem;
-    }
-
-    .form-group label {
-        display: block;
-        margin-bottom: 0.4rem;
-        font-weight: 600;
-        color: var(--text-color);
-        font-size: 1.4rem;
-    }
-
-    .field-hint {
-        display: block;
-        font-size: 1.4rem;
-        font-weight: normal;
-        color: var(--text-light);
-        margin-top: 0.25rem;
-    }
-
-    .form-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-    }
-
-    .letter-input {
-        width: 100%;
-        padding: 1.2rem;
-        border: 2px solid var(--border-color);
-        border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
-        font-family: 'Georgia', 'Times New Roman', serif;
-        font-size: 1.5rem;
-        transition: border-color 0.3s;
-    }
-
-    .letter-input:focus {
-        outline: none;
-        border-color: var(--primary-color);
-    }
-
-    .letter-textarea {
-        width: 100%;
-        padding: 1.4rem;
-        border: 2px solid var(--border-color);
-        border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
-        font-family: 'Georgia', 'Times New Roman', serif;
-        font-size: 1.5rem;
-        line-height: 1.8;
-        resize: vertical;
-        min-height: 280px;
-        transition: border-color 0.3s;
-    }
-
-    .letter-textarea:focus {
-        outline: none;
-        border-color: var(--primary-color);
-    }
-
-    .letter-preview-panel {
+        padding: 1.5rem;
+        border-radius: 12px;
+        border: 1px solid var(--border-color);
         position: sticky;
         top: 2rem;
-        height: fit-content;
     }
 
-    .preview-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
+    .sidebar h3 {
+        font-size: 1.6rem;
         margin-bottom: 0.5rem;
-        gap: 1rem;
-    }
-
-    .letter-preview-panel h4 {
-        margin-bottom: 0;
         color: var(--primary-color);
     }
 
-    .btn-download-pdf {
-        background-color: var(--secondary-color);
-        color: var(--text-color);
-        border: 2px solid var(--border-color);
-        padding: 0.9rem 1.7rem;
+    .sidebar-hint {
+        font-size: 1.2rem;
+        color: var(--text-light);
+        margin-bottom: 1.5rem;
+    }
+
+    .placeholder-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.8rem;
+    }
+
+    .placeholder-item {
+        background: white;
+        border: 1px solid var(--border-color);
+        padding: 0.8rem 1.2rem;
+        border-radius: 8px;
+        cursor: grab;
         font-size: 1.4rem;
-        font-family: inherit;
-        border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
-        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
         transition: all 0.2s;
-        box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+
+    .placeholder-item:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        border-color: var(--primary-color);
+    }
+
+    .placeholder-item:active {
+        cursor: grabbing;
+    }
+
+    .placeholder-item .icon {
+        color: var(--primary-color);
         font-weight: bold;
-        white-space: nowrap;
+    }
+
+    /* Editor Area */
+    .editor-area {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    /* Toolbar */
+    .editor-toolbar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #f8f9fa;
+        padding: 0.8rem 1.5rem;
+        border-radius: 8px 8px 0 0;
+        border: 1px solid var(--border-color);
+        border-bottom: none;
+    }
+
+    .toggle-wrapper {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .toggle-label {
+        font-size: 1.4rem;
+        font-weight: 500;
+    }
+
+    /* Toggle Switch */
+    .toggle-switch {
+        position: relative;
+        display: inline-block;
+        width: 50px;
+        height: 26px;
+    }
+
+    .toggle-switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .slider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #ccc;
+        transition: .4s;
+    }
+
+    .slider:before {
+        position: absolute;
+        content: "";
+        height: 20px;
+        width: 20px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        transition: .4s;
+    }
+
+    input:checked + .slider {
+        background-color: var(--primary-color);
+    }
+
+    input:checked + .slider:before {
+        transform: translateX(24px);
+    }
+
+    .slider.round {
+        border-radius: 34px;
+    }
+
+    .slider.round:before {
+        border-radius: 50%;
+    }
+
+    .btn-text {
+        background: none;
+        border: none;
+        color: var(--primary-color);
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 1.4rem;
         display: flex;
         align-items: center;
         gap: 0.5rem;
     }
 
-    .btn-download-pdf:hover:not(:disabled) {
-        transform: translateY(-2px);
-        box-shadow: 3px 3px 0px rgba(0, 0, 0, 0.2);
-        background-color: #f0d385;
+    .btn-text:hover {
+        text-decoration: underline;
     }
 
-    .btn-download-pdf:active:not(:disabled) {
-        transform: translateY(1px);
-        box-shadow: 1px 1px 0px rgba(0, 0, 0, 0.2);
-    }
-
-    .btn-download-pdf:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-        transform: none;
-    }
-
-    .spinner {
-        animation: spin 1s linear infinite;
-    }
-
-    @keyframes spin {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
-
-    .preview-note {
-        font-size: 1.4rem;
-        color: var(--text-light);
-        margin-bottom: 1rem;
-    }
-
-    .preview-letter {
+    /* Rich Editor */
+    .rich-editor {
+        min-height: 400px;
+        padding: 2rem;
         background: white;
-        border: 2px solid var(--border-color);
-        border-radius: 255px 15px 225px 15px / 15px 225px 15px 255px;
-        padding: 2.5rem;
-        box-shadow: var(--shadow);
-        min-height: 500px;
-    }
-
-    .preview-content {
+        border: 1px solid var(--border-color);
+        border-radius: 0 0 8px 8px;
         font-family: 'Georgia', 'Times New Roman', serif;
+        font-size: 1.6rem;
         line-height: 1.8;
-        font-size: 1.5rem;
+        outline: none;
+        white-space: pre-wrap;
+        box-shadow: var(--shadow);
     }
 
-    .preview-greeting {
-        font-size: 1.7rem;
-        margin-bottom: 1.5rem;
+    .rich-editor:focus {
+        border-color: var(--primary-color);
+        box-shadow: var(--shadow-lg);
+    }
+
+    .rich-editor.preview-mode {
+        background-color: #fafafa;
+        color: #333;
+    }
+
+    /* Pills in Editor */
+    :global(.placeholder-pill) {
+        display: inline-block;
+        background-color: #e3f2fd;
+        color: #1976d2;
+        padding: 2px 8px;
+        border-radius: 12px;
+        border: 1px solid #bbdefb;
+        font-family: 'Inter', sans-serif;
+        font-size: 0.9em;
+        margin: 0 2px;
+        vertical-align: middle;
+        user-select: none;
+        cursor: default;
         font-weight: 500;
     }
 
-    .preview-body {
-        margin-bottom: 2rem;
-        white-space: pre-wrap;
-        font-size: 1.5rem;
-    }
-
-    .preview-closing {
-        margin-bottom: 0.8rem;
-        font-size: 1.5rem;
-    }
-
-    .preview-signature {
-        font-weight: 600;
-        font-style: italic;
-        font-size: 1.5rem;
-    }
-
-    .preview-placeholder {
-        color: var(--text-light);
-        font-style: italic;
-        margin: 1rem 0;
-    }
-
-    @media (max-width: 1024px) {
-        .letter-composer-wrapper {
+    @media (max-width: 900px) {
+        .wysiwyg-container {
             grid-template-columns: 1fr;
         }
 
-        .letter-preview-panel {
+        .sidebar {
             position: static;
+            margin-bottom: 1rem;
         }
 
-        .form-row {
-            grid-template-columns: 1fr;
+        .placeholder-list {
+            flex-direction: row;
+            flex-wrap: wrap;
         }
     }
 </style>

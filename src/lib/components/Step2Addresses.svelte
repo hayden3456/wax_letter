@@ -576,6 +576,58 @@ Michael,Brown,654 Cedar Lane,Phoenix,AZ,85001`;
 {/if}
 
 <style>
+    .tab-container {
+        display: flex;
+        gap: 0;
+        margin: 2rem 0;
+        border-bottom: 3px solid var(--border-color);
+        background: var(--card-background);
+        border-radius: 8px 8px 0 0;
+        padding: 0.5rem 0.5rem 0 0.5rem;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .tab-btn {
+        flex: 1;
+        padding: 1.2rem 2rem;
+        border: none;
+        border-bottom: 3px solid transparent;
+        background: transparent;
+        cursor: pointer;
+        font-family: inherit;
+        font-size: 1.7rem;
+        font-weight: bold;
+        color: var(--text-light);
+        transition: all 0.3s;
+        border-radius: 8px 8px 0 0;
+        position: relative;
+        margin-bottom: -3px;
+    }
+
+    .tab-btn:hover {
+        background: rgba(0, 0, 0, 0.03);
+        color: var(--text-color);
+        transform: none;
+    }
+
+    .tab-btn.active {
+        background: white;
+        color: var(--primary-color);
+        border-bottom-color: var(--primary-color);
+        box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
+        transform: none;
+    }
+
+    .tab-btn.active::after {
+        content: '';
+        position: absolute;
+        bottom: -3px;
+        left: 0;
+        right: 0;
+        height: 3px;
+        background: var(--primary-color);
+    }
+
     .return-address-section {
         margin-top: 3rem;
         padding-top: 2rem;

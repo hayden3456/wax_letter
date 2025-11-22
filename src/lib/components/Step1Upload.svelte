@@ -90,6 +90,15 @@
             return;
         }
 
+        // Check file size (5MB limit)
+        const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+        if (file.size > MAX_FILE_SIZE) {
+            alert(`File too large. Maximum size is 5MB. Your file is ${(file.size / (1024 * 1024)).toFixed(2)}MB. Please use a smaller file.`);
+            if (stampInput) {
+                stampInput.value = '';
+            }
+            return;
+        }
 
         isGenerating = true;
         startLoadingAnimation();
@@ -105,6 +114,16 @@
             let apiFile = file;
             if (file.type === 'image/svg+xml') {
                 apiFile = await convertSvgToPng(file);
+                // Check size again after conversion
+                if (apiFile.size > MAX_FILE_SIZE) {
+                    alert(`Converted file is too large (${(apiFile.size / (1024 * 1024)).toFixed(2)}MB). Please use a smaller SVG file.`);
+                    isGenerating = false;
+                    stopLoadingAnimation();
+                    if (stampInput) {
+                        stampInput.value = '';
+                    }
+                    return;
+                }
             }
 
             // Generate AI preview
@@ -127,7 +146,14 @@
                     console.log('✅ AI letter image saved to campaign state');
                 }
             } else {
-                console.error('Failed to generate seal preview');
+                const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
+                console.error('Failed to generate seal preview:', response.status, errorData);
+                
+                if (response.status === 413) {
+                    alert('File is too large. Please use a smaller file (maximum 5MB).');
+                } else {
+                    alert(`Failed to generate preview: ${errorData.error || 'Server error'}`);
+                }
             }
         } catch (error) {
             console.error('Error uploading file:', error);

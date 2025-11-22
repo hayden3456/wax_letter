@@ -149,51 +149,16 @@
     }
 
     // Continue a pending generation (if file was saved)
+    // Note: We no longer save large files to localStorage to prevent QuotaExceededError
+    // If generation was interrupted, user will need to re-upload
     async function continuePendingGeneration() {
-        const savedFileData = localStorage.getItem(STORAGE_KEYS.UPLOADED_FILE + '_data');
-        if (!savedFileData) return;
-
-        try {
-            isGenerating = true;
-            startLoadingAnimation();
-            saveState();
-
-            // Convert base64 data URL back to File
-            const response = await fetch(savedFileData);
-            const blob = await response.blob();
-            const file = new File([blob], 'logo.png', { type: blob.type || 'image/png' });
-
-            const formData = new FormData();
-            formData.append('logo', file);
-
-            const apiResponse = await fetch('/api/generate-seal', {
-                method: 'POST',
-                body: formData,
-                keepalive: true
-            });
-
-            if (apiResponse.ok) {
-                const data = await apiResponse.json();
-                if (data.image) {
-                    generatedImage = data.image;
-                    hasUploadedFile = true;
-                    await saveState(); // Save to both local and cloud
-                } else {
-                    console.error('No image in response:', data);
-                    localStorage.removeItem(STORAGE_KEYS.IS_GENERATING);
-                }
-            } else {
-                const errorData = await apiResponse.json().catch(() => ({ error: 'Unknown error' }));
-                console.error('Failed to generate seal:', apiResponse.status, errorData);
-                localStorage.removeItem(STORAGE_KEYS.IS_GENERATING);
-            }
-        } catch (error) {
-            console.error('Error continuing generation:', error);
+        // Clear the generating flag since we can't resume without the file
+        if (browser) {
             localStorage.removeItem(STORAGE_KEYS.IS_GENERATING);
-        } finally {
-            isGenerating = false;
-            stopLoadingAnimation();
-            await saveState();
+        }
+        // If there's no generated image, reset the upload state
+        if (!generatedImage) {
+            hasUploadedFile = false;
         }
     }
 
@@ -252,20 +217,8 @@
             // Ignore errors
         }
 
-        // Save file to localStorage for potential continuation
-        if (browser) {
-            try {
-                const reader = new FileReader();
-                reader.onload = (e) => {
-                    if (e.target && typeof e.target.result === 'string') {
-                        localStorage.setItem(STORAGE_KEYS.UPLOADED_FILE + '_data', e.target.result);
-                    }
-                };
-                reader.readAsDataURL(file);
-            } catch (e) {
-                console.error('Failed to save file:', e);
-            }
-        }
+        // Don't save large files to localStorage (causes QuotaExceededError)
+        // Instead, we'll rely on cloud storage and the file will be re-uploaded if needed
 
         // Start generation (this will continue even if component unmounts)
         isGenerating = true;
@@ -298,7 +251,13 @@
             } else {
                 const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
                 console.error('Failed to generate seal:', response.status, errorData);
-                alert(`Error generating image: ${errorData.error || 'Server error'}`);
+                
+                if (response.status === 413) {
+                    alert('File is too large. Please use a smaller file (maximum 5MB).');
+                } else {
+                    alert(`Error generating image: ${errorData.error || 'Server error'}`);
+                }
+                
                 if (browser) {
                     localStorage.removeItem(STORAGE_KEYS.IS_GENERATING);
                 }
@@ -327,9 +286,27 @@
         let file = target.files[0];
         if (file) {
             try {
+                // Check file size (5MB limit)
+                const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+                if (file.size > MAX_FILE_SIZE) {
+                    alert(`File too large. Maximum size is 5MB. Your file is ${(file.size / (1024 * 1024)).toFixed(2)}MB. Please use a smaller file.`);
+                    if (fileInput) {
+                        fileInput.value = '';
+                    }
+                    return;
+                }
+
                 // Convert SVG to PNG if needed
                 if (file.type === 'image/svg+xml') {
                     file = await convertSvgToPng(file);
+                    // Check size again after conversion
+                    if (file.size > MAX_FILE_SIZE) {
+                        alert(`Converted file is too large (${(file.size / (1024 * 1024)).toFixed(2)}MB). Please use a smaller SVG file.`);
+                        if (fileInput) {
+                            fileInput.value = '';
+                        }
+                        return;
+                    }
                 }
 
                 uploadedLogo = URL.createObjectURL(file);

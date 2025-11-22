@@ -3,8 +3,16 @@ import { json } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
 import fs from 'fs/promises';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
 const GOOGLE_API_KEY = env.GOOGLE_API_KEY;
+
+// Get the directory of the current module (works in both dev and production)
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Maximum file size: 5MB (to prevent 413 errors)
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB in bytes
 
 /** @type {import('./$types').RequestHandler} */
 export async function POST({ request }) {
@@ -21,6 +29,13 @@ export async function POST({ request }) {
             return json({ error: 'No valid logo file provided' }, { status: 400 });
         }
 
+        // Check file size before processing
+        if (logoFile.size > MAX_FILE_SIZE) {
+            return json({ 
+                error: `File too large. Maximum size is ${MAX_FILE_SIZE / (1024 * 1024)}MB. Your file is ${(logoFile.size / (1024 * 1024)).toFixed(2)}MB.` 
+            }, { status: 413 });
+        }
+
         const logoBuffer = await logoFile.arrayBuffer();
         const logoBase64 = Buffer.from(logoBuffer).toString('base64');
 
@@ -31,14 +46,32 @@ export async function POST({ request }) {
         }
 
         // Read the base letter image
-        // In production/preview, static files might be served differently, but for dev/node adapter:
-        const baseLetterPath = path.resolve('static/single_letter_no_bg.png');
+        // Try multiple paths to work in both dev and production
+        const possiblePaths = [
+            path.resolve(process.cwd(), 'static/single_letter_no_bg.png'), // Production build
+            path.resolve(__dirname, '../../../static/single_letter_no_bg.png'), // Relative to API route
+            path.resolve(process.cwd(), 'build/static/single_letter_no_bg.png'), // Built static files
+            path.resolve('static/single_letter_no_bg.png') // Fallback
+        ];
+
         let baseLetterBuffer;
-        try {
-            baseLetterBuffer = await fs.readFile(baseLetterPath);
-        } catch (e) {
-            console.error('Error reading base letter:', e);
-            return json({ error: 'Failed to read base image' }, { status: 500 });
+        let lastError;
+        
+        for (const baseLetterPath of possiblePaths) {
+            try {
+                baseLetterBuffer = await fs.readFile(baseLetterPath);
+                console.log('✅ Successfully loaded base image from:', baseLetterPath);
+                break;
+            } catch (e) {
+                lastError = e;
+                continue;
+            }
+        }
+
+        if (!baseLetterBuffer) {
+            console.error('Error reading base letter from all paths:', lastError);
+            console.error('Tried paths:', possiblePaths);
+            return json({ error: 'Failed to read base image. Please contact support.' }, { status: 500 });
         }
 
         const baseLetterBase64 = baseLetterBuffer.toString('base64');

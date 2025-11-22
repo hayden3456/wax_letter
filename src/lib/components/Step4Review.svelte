@@ -22,16 +22,14 @@
             '{{City}}': 'New York'
         };
 
-        let previewSubject = letter.subject;
-        let previewBody = letter.body;
+        let previewBody = letter.body || '';
 
         Object.keys(sampleData).forEach(key => {
             const regex = new RegExp(key.replace(/[{}]/g, '\\$&'), 'g');
-            previewSubject = previewSubject.replace(regex, sampleData[key]);
             previewBody = previewBody.replace(regex, sampleData[key]);
         });
 
-        return { subject: previewSubject, body: previewBody };
+        return { body: previewBody };
     }
 
     // Substitute placeholders with actual recipient data
@@ -75,19 +73,7 @@
             let yPosition = margin;
 
             // Get personalized content
-            const subject = substituteContent($appState.letter.subject, address);
             const body = substituteContent($appState.letter.body, address);
-            const closing = $appState.letter.closing || '';
-            const signature = $appState.letter.signature || '';
-
-            // Add subject/greeting
-            if (subject) {
-                doc.setFontSize(12);
-                doc.setFont('times', 'normal');
-                const subjectLines = doc.splitTextToSize(subject, maxWidth);
-                doc.text(subjectLines, margin, yPosition);
-                yPosition += subjectLines.length * 7 + 10;
-            }
 
             // Add body
             if (body) {
@@ -105,28 +91,6 @@
                     yPosition += 7;
                 }
                 yPosition += 10;
-            }
-
-            // Add closing
-            if (closing) {
-                if (yPosition > pageHeight - margin - 20) {
-                    doc.addPage();
-                    yPosition = margin;
-                }
-                doc.setFontSize(11);
-                doc.text(closing, margin, yPosition);
-                yPosition += 10;
-            }
-
-            // Add signature
-            if (signature) {
-                if (yPosition > pageHeight - margin - 20) {
-                    doc.addPage();
-                    yPosition = margin;
-                }
-                doc.setFontSize(11);
-                doc.setFont('times', 'italic');
-                doc.text(signature, margin, yPosition);
             }
 
             // Save the PDF
@@ -190,9 +154,6 @@
                 if (returnAddr.country && returnAddr.country !== 'USA') {
                     doc.text(returnAddr.country, returnAddressX, returnAddressY);
                 }
-            } else if ($appState.letter.signature) {
-                // Fallback to signature if no return address
-                doc.text($appState.letter.signature, returnAddressX, returnAddressY);
             }
 
             // Recipient address (center-right of envelope)
@@ -302,10 +263,7 @@
         <div class="review-card full-width">
             <h3>Letter Content</h3>
             <div class="review-letter">
-                <p class="review-greeting">{previewContent.subject}</p>
                 <p class="review-body">{previewContent.body}</p>
-                <p class="review-closing">{$appState.letter.closing}</p>
-                <p class="review-signature">{$appState.letter.signature}</p>
             </div>
             <button class="btn-link" on:click={() => dispatch('edit', 3)}>Edit</button>
         </div>

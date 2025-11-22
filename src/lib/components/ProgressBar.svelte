@@ -4,29 +4,31 @@
 </script>
 
 <div class="progress-container visible">
-    <div class="progress-bar">
+    <div class="progress-bar-wrapper">
         {#if $authStore.user}
             <a href="/dashboard" class="dashboard-back-btn">← Back to Dashboard</a>
         {/if}
-        <a href="/campaign/step/1" class="progress-step {currentStep >= 1 ? 'active' : ''} {currentStep > 1 ? 'completed' : ''}" data-step="1">
-            <div class="step-circle">1</div>
-            <span>Upload Stamp</span>
-        </a>
-        <div class="progress-line"></div>
-        <a href="/campaign/step/2" class="progress-step {currentStep >= 2 ? 'active' : ''} {currentStep > 2 ? 'completed' : ''}" data-step="2">
-            <div class="step-circle">2</div>
-            <span>Addresses</span>
-        </a>
-        <div class="progress-line"></div>
-        <a href="/campaign/step/3" class="progress-step {currentStep >= 3 ? 'active' : ''} {currentStep > 3 ? 'completed' : ''}" data-step="3">
-            <div class="step-circle">3</div>
-            <span>Write Letter</span>
-        </a>
-        <div class="progress-line"></div>
-        <a href="/campaign/step/4" class="progress-step {currentStep >= 4 ? 'active' : ''} {currentStep > 4 ? 'completed' : ''}" data-step="4">
-            <div class="step-circle">4</div>
-            <span>Review</span>
-        </a>
+        <div class="progress-bar {$authStore.user ? 'with-back-button' : ''}">
+            <a href="/campaign/step/1" class="progress-step {currentStep >= 1 ? 'active' : ''} {currentStep > 1 ? 'completed' : ''}" data-step="1">
+                <div class="step-circle">1</div>
+                <span>Upload Stamp</span>
+            </a>
+            <div class="progress-line"></div>
+            <a href="/campaign/step/2" class="progress-step {currentStep >= 2 ? 'active' : ''} {currentStep > 2 ? 'completed' : ''}" data-step="2">
+                <div class="step-circle">2</div>
+                <span>Addresses</span>
+            </a>
+            <div class="progress-line"></div>
+            <a href="/campaign/step/3" class="progress-step {currentStep >= 3 ? 'active' : ''} {currentStep > 3 ? 'completed' : ''}" data-step="3">
+                <div class="step-circle">3</div>
+                <span>Write Letter</span>
+            </a>
+            <div class="progress-line"></div>
+            <a href="/campaign/step/4" class="progress-step {currentStep >= 4 ? 'active' : ''} {currentStep > 4 ? 'completed' : ''}" data-step="4">
+                <div class="step-circle">4</div>
+                <span>Review</span>
+            </a>
+        </div>
     </div>
 </div>
 
@@ -35,9 +37,16 @@
         position: relative;
     }
 
+    .progress-bar-wrapper {
+        display: flex;
+        align-items: center;
+        max-width: 1200px;
+        margin: 0 auto;
+        gap: 2rem;
+    }
+
     .dashboard-back-btn {
-        position: absolute;
-        left: 2rem;
+        flex-shrink: 0;
         padding: 0.5rem 1rem;
         background-color: var(--card-background);
         color: var(--text-color);
@@ -50,6 +59,7 @@
         display: flex;
         align-items: center;
         gap: 0.5rem;
+        white-space: nowrap;
     }
 
     .dashboard-back-btn:hover {
@@ -57,5 +67,16 @@
         color: white;
         border-color: var(--primary-dark);
         transform: translateX(-2px);
+    }
+
+    :global(.progress-bar) {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    :global(.progress-bar.with-back-button) {
+        margin-left: 0;
     }
 </style>
