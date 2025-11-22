@@ -276,9 +276,8 @@
             <p>Start your first bulk mailing today!</p>
             <div class="empty-actions">
                 <button onclick={startNewCampaign} class="btn-primary">Create Your Mail</button>
-                <button onclick={startSampleLetter} class="btn-secondary">Try a Sample First</button>
             </div>
-            <p class="sample-hint">New to wax seals? Order a sample letter for $15 to see our quality.</p>
+
         </div>
     {:else}
         <div class="campaign-grid" in:fade>

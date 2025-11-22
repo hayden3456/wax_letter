@@ -46,7 +46,7 @@ export async function POST({ request }) {
         }
 
         // Read the base letter image
-        // Try multiple paths to work in both dev and production
+        // Try filesystem first (works in dev/localhost), then fetch from URL (works in production)
         const possiblePaths = [
             path.resolve(process.cwd(), 'static/single_letter_no_bg.png'), // Production build
             path.resolve(__dirname, '../../../static/single_letter_no_bg.png'), // Relative to API route
@@ -57,10 +57,11 @@ export async function POST({ request }) {
         let baseLetterBuffer;
         let lastError;
         
+        // Try filesystem first (for localhost/dev)
         for (const baseLetterPath of possiblePaths) {
             try {
                 baseLetterBuffer = await fs.readFile(baseLetterPath);
-                console.log('✅ Successfully loaded base image from:', baseLetterPath);
+                console.log('✅ Successfully loaded base image from filesystem:', baseLetterPath);
                 break;
             } catch (e) {
                 lastError = e;
@@ -68,10 +69,28 @@ export async function POST({ request }) {
             }
         }
 
+        // If filesystem failed, try fetching from public URL (for production)
         if (!baseLetterBuffer) {
-            console.error('Error reading base letter from all paths:', lastError);
-            console.error('Tried paths:', possiblePaths);
-            return json({ error: 'Failed to read base image. Please contact support.' }, { status: 500 });
+            try {
+                const url = new URL(request.url);
+                const baseUrl = `${url.protocol}//${url.host}`;
+                const imageUrl = `${baseUrl}/single_letter_no_bg.png`;
+                
+                console.log('⚠️ Filesystem read failed, trying to fetch from URL:', imageUrl);
+                const imageResponse = await fetch(imageUrl);
+                
+                if (!imageResponse.ok) {
+                    throw new Error(`Failed to fetch image: ${imageResponse.status} ${imageResponse.statusText}`);
+                }
+                
+                baseLetterBuffer = Buffer.from(await imageResponse.arrayBuffer());
+                console.log('✅ Successfully loaded base image from URL:', imageUrl);
+            } catch (fetchError) {
+                console.error('Error reading base letter from filesystem:', lastError);
+                console.error('Error fetching base letter from URL:', fetchError);
+                console.error('Tried filesystem paths:', possiblePaths);
+                return json({ error: 'Failed to read base image. Please contact support.' }, { status: 500 });
+            }
         }
 
         const baseLetterBase64 = baseLetterBuffer.toString('base64');
