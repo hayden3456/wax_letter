@@ -119,6 +119,20 @@
         font-size: 1.4rem;
     }
 
+    @media (max-width: 768px) {
+        .footer-content p {
+            font-size: 1rem;
+        }
+
+        .footer-links a {
+            font-size: 1.1rem;
+        }
+
+        .footer-links .separator {
+            font-size: 1.1rem;
+        }
+    }
+
     @media (max-width: 480px) {
         .footer-links {
             flex-direction: column;
@@ -127,6 +141,14 @@
 
         .footer-links .separator {
             display: none;
+        }
+
+        .footer-content p {
+            font-size: 0.95rem;
+        }
+
+        .footer-links a {
+            font-size: 1rem;
         }
     }
 </style>

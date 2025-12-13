@@ -507,6 +507,7 @@
         height: 100%;
         object-fit: contain; /* Ensure image fits within container without distortion */
         filter: drop-shadow(5px 5px 5px rgba(0,0,0,0.2));
+        transform: scale(1.15); /* Zoom in 15% to make image more prominent */
     }
 
     /* .wax-seal-overlay removed */
@@ -542,7 +543,7 @@
     }
 
     .hero-img.generated {
-        transform: rotate(0deg);
+        transform: scale(1.15) rotate(0deg); /* Maintain 15% zoom even for generated images */
     }
 
     .upload-hint-overlay {
@@ -722,15 +723,27 @@
         .about-us {
             grid-template-columns: 1fr;
             text-align: center;
-            gap: 2rem;
+            gap: 1.5rem;
+            padding: 2rem 1rem;
+        }
+
+        .about-content h2 {
+            font-size: 2rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .about-content p {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
         }
 
         .about-images {
-            height: 600px;
+            height: 500px;
         }
 
         .polaroid {
-            width: 220px;
+            width: 180px;
+            padding: 0.6rem 0.6rem 2rem 0.6rem;
         }
 
         .polaroid:nth-child(1) {
@@ -740,20 +753,33 @@
         }
 
         .polaroid:nth-child(2) {
-            top: 180px;
+            top: 150px;
             left: 50%;
             transform: translateX(-50%) rotate(5deg);
         }
 
         .polaroid:nth-child(3) {
-            top: 360px;
+            top: 300px;
             left: 50%;
             transform: translateX(-50%) rotate(-6deg);
+        }
+
+        .polaroid span {
+            font-size: 1.2rem;
         }
 
         .hero {
             grid-template-columns: 1fr;
             text-align: center;
+        }
+
+        .hero-image {
+            padding: 0.5rem;
+        }
+
+        .real-image-container {
+            max-width: 100%;
+            max-height: 400px;
         }
 
         .hero-buttons {
@@ -763,6 +789,90 @@
         .hero-buttons, .cta-buttons {
             flex-direction: column;
             align-items: stretch;
+        }
+
+        .btn-secondary-outline {
+            padding: 0.8rem 1.5rem;
+            font-size: 1.1rem;
+        }
+
+        .btn-secondary-outline.large {
+            padding: 1rem 2rem;
+            font-size: 1.2rem;
+        }
+
+        .showcase-img {
+            height: 160px;
+        }
+
+        .ai-disclaimer {
+            font-size: 1rem;
+            padding: 0.4rem;
+        }
+
+        .upload-hint-overlay span {
+            font-size: 0.9rem;
+            padding: 0.4rem 0.8rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .about-us {
+            padding: 1.5rem 0.8rem;
+        }
+
+        .about-content h2 {
+            font-size: 1.6rem;
+        }
+
+        .about-content p {
+            font-size: 1.05rem;
+        }
+
+        .about-images {
+            height: 420px;
+        }
+
+        .polaroid {
+            width: 150px;
+            padding: 0.4rem 0.4rem 1.5rem 0.4rem;
+        }
+
+        .polaroid:nth-child(1) {
+            top: 0;
+        }
+
+        .polaroid:nth-child(2) {
+            top: 130px;
+        }
+
+        .polaroid:nth-child(3) {
+            top: 260px;
+        }
+
+        .polaroid span {
+            font-size: 1rem;
+        }
+
+        .real-image-container {
+            max-height: 300px;
+        }
+
+        .showcase-img {
+            height: 140px;
+        }
+
+        .btn-secondary-outline {
+            padding: 0.7rem 1.2rem;
+            font-size: 1rem;
+        }
+
+        .sample-note {
+            font-size: 1rem;
+        }
+
+        .ai-disclaimer {
+            font-size: 0.9rem;
         }
     }
 </style>

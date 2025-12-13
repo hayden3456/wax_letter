@@ -577,4 +577,107 @@ Sincerely,
             flex-wrap: wrap;
         }
     }
+
+    @media (max-width: 768px) {
+        .wysiwyg-container {
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+
+        .sidebar {
+            padding: 1rem;
+        }
+
+        .sidebar h3 {
+            font-size: 1.3rem;
+        }
+
+        .sidebar-hint {
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .placeholder-item {
+            padding: 0.6rem 1rem;
+            font-size: 1.1rem;
+        }
+
+        .editor-toolbar {
+            padding: 0.6rem 1rem;
+            flex-direction: column;
+            gap: 0.8rem;
+            align-items: flex-start;
+        }
+
+        .toggle-label {
+            font-size: 1.1rem;
+        }
+
+        .btn-text {
+            font-size: 1.1rem;
+        }
+
+        .rich-editor {
+            min-height: 280px;
+            padding: 1.2rem;
+            font-size: 1.2rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .sidebar {
+            padding: 0.8rem;
+        }
+
+        .sidebar h3 {
+            font-size: 1.1rem;
+        }
+
+        .sidebar-hint {
+            font-size: 0.9rem;
+        }
+
+        .placeholder-item {
+            padding: 0.5rem 0.8rem;
+            font-size: 1rem;
+        }
+
+        .toggle-wrapper {
+            gap: 0.6rem;
+        }
+
+        .toggle-label {
+            font-size: 1rem;
+        }
+
+        .toggle-switch {
+            width: 44px;
+            height: 22px;
+        }
+
+        .slider:before {
+            height: 16px;
+            width: 16px;
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(20px);
+        }
+
+        .btn-text {
+            font-size: 1rem;
+        }
+
+        .rich-editor {
+            min-height: 220px;
+            padding: 1rem;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        :global(.placeholder-pill) {
+            padding: 1px 6px;
+            font-size: 0.85em;
+        }
+    }
 </style>

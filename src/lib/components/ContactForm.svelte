@@ -148,7 +148,7 @@ ${formData.get('message')}`;
           <textarea
             id="message"
             name="message"
-            rows="5"
+            rows="4"
             required
             disabled={submitting}
             placeholder="What's the occasion? When do you need the letters? Any special requirements?"
@@ -285,20 +285,168 @@ ${formData.get('message')}`;
   }
 
   @media (max-width: 768px) {
+    .contact-section {
+      padding: 2rem 1rem;
+    }
+
+    .contact-header {
+      margin-bottom: 1rem;
+    }
+
     .contact-header h2 {
-      font-size: 2rem;
+      font-size: 1.8rem;
+      margin-bottom: 0.5rem;
     }
 
     .contact-header p {
-      font-size: 1.4rem;
+      font-size: 1.1rem;
     }
 
     .contact-form {
-      padding: 2rem;
+      padding: 1rem;
+      border-radius: 15px;
     }
 
     .form-row {
       grid-template-columns: 1fr;
+      gap: 0.5rem;
+    }
+
+    .contact-form :global(.form-group) {
+      margin-bottom: 0.6rem;
+    }
+
+    .contact-form :global(.form-group label) {
+      margin-bottom: 0.3rem;
+      font-size: 1rem;
+    }
+
+    .contact-form :global(.form-group input),
+    .contact-form :global(.form-group textarea) {
+      padding: 0.6rem;
+      font-size: 1rem;
+    }
+
+    .form-group select {
+      padding: 0.6rem;
+      font-size: 1rem;
+    }
+
+    .contact-form :global(.form-group textarea) {
+      min-height: 100px;
+      rows: 4;
+    }
+
+    .error-message {
+      padding: 0.8rem;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .success-message {
+      padding: 2rem 1.5rem;
+    }
+
+    .success-icon {
+      width: 60px;
+      height: 60px;
+      font-size: 2rem;
+      margin-bottom: 1rem;
+    }
+
+    .success-title {
+      font-size: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .success-text {
+      font-size: 1.1rem;
+    }
+
+    .form-submit {
+      margin-top: 1rem;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .contact-section {
+      padding: 1.5rem 0.8rem;
+    }
+
+    .contact-header {
+      margin-bottom: 0.8rem;
+    }
+
+    .contact-header h2 {
+      font-size: 1.5rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .contact-header p {
+      font-size: 0.95rem;
+    }
+
+    .contact-form {
+      padding: 0.8rem;
+    }
+
+    .form-row {
+      gap: 0.4rem;
+    }
+
+    .contact-form :global(.form-group) {
+      margin-bottom: 0.5rem;
+    }
+
+    .contact-form :global(.form-group label) {
+      margin-bottom: 0.25rem;
+      font-size: 0.95rem;
+    }
+
+    .contact-form :global(.form-group input),
+    .contact-form :global(.form-group textarea) {
+      padding: 0.5rem;
+      font-size: 0.95rem;
+    }
+
+    .form-group select {
+      padding: 0.5rem;
+      font-size: 0.95rem;
+    }
+
+    .contact-form :global(.form-group textarea) {
+      min-height: 80px;
+      rows: 3;
+    }
+
+    .error-message {
+      padding: 0.6rem;
+      font-size: 0.95rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .success-message {
+      padding: 1.5rem 1rem;
+    }
+
+    .success-icon {
+      width: 50px;
+      height: 50px;
+      font-size: 1.6rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .success-title {
+      font-size: 1.3rem;
+      margin-bottom: 0.4rem;
+    }
+
+    .success-text {
+      font-size: 1rem;
+    }
+
+    .form-submit {
+      margin-top: 0.8rem;
     }
   }
 </style>

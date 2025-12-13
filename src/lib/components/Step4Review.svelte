@@ -593,11 +593,60 @@
         box-shadow: var(--shadow-lg);
     }
 
+    @media (max-width: 768px) {
+        .campaign-name-section {
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .campaign-name-input {
+            padding: 0.6rem;
+            font-size: 1.1rem;
+        }
+
+        .preview-letters-section {
+            padding: 1rem;
+            border-radius: 15px;
+        }
+
+        .preview-letters-section h3 {
+            font-size: 1.4rem;
+        }
+
+        .recipient-number {
+            font-size: 1.1rem;
+            padding: 0.3rem 0.5rem;
+        }
+
+        .recipient-details strong {
+            font-size: 1.1rem;
+        }
+
+        .recipient-address {
+            font-size: 1rem;
+        }
+
+        .btn-preview-download {
+            padding: 0.6rem 1rem;
+            font-size: 1.1rem;
+        }
+
+        .btn-preview-download .icon {
+            font-size: 1.1rem;
+        }
+
+        .sign-in-link {
+            padding: 0.8rem 1.5rem;
+            font-size: 1.1rem;
+        }
+    }
+
     @media (max-width: 640px) {
         .recipient-preview-item {
             flex-direction: column;
             align-items: flex-start;
             gap: 0.75rem;
+            padding: 1rem;
         }
 
         .preview-actions {
@@ -607,6 +656,8 @@
         .btn-preview-download {
             flex: 1;
             justify-content: center;
+            padding: 0.5rem 0.8rem;
+            font-size: 1rem;
         }
 
         .step-actions.center {
@@ -616,6 +667,49 @@
         .sign-in-link {
             width: 100%;
             text-align: center;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .campaign-name-section {
+            padding: 0.8rem;
+        }
+
+        .campaign-name-input {
+            font-size: 1rem;
+        }
+
+        .preview-letters-section {
+            padding: 0.8rem;
+        }
+
+        .preview-letters-section h3 {
+            font-size: 1.2rem;
+        }
+
+        .recipient-preview-item {
+            padding: 0.8rem;
+        }
+
+        .recipient-number {
+            font-size: 1rem;
+        }
+
+        .recipient-details strong {
+            font-size: 1rem;
+        }
+
+        .recipient-address {
+            font-size: 0.9rem;
+        }
+
+        .btn-preview-download {
+            font-size: 0.9rem;
+        }
+
+        .sign-in-link {
+            padding: 0.7rem 1.2rem;
+            font-size: 1rem;
         }
     }
 </style>

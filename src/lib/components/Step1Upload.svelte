@@ -288,6 +288,7 @@
         height: 100%;
         object-fit: contain;
         filter: drop-shadow(5px 5px 5px rgba(0,0,0,0.2));
+        transform: scale(1.15); /* Zoom in 15% to make image more prominent */
     }
 
     .loading-overlay {
@@ -321,7 +322,7 @@
     }
 
     .hero-img.generated {
-        transform: rotate(0deg);
+        transform: scale(1.15) rotate(0deg); /* Maintain 15% zoom even for generated images */
     }
 
     .ai-disclaimer {
@@ -405,5 +406,79 @@
 
     .campaign-name-input::placeholder {
         color: #999;
+    }
+
+    @media (max-width: 768px) {
+        .real-image-container {
+            max-width: 100%;
+            max-height: 400px;
+        }
+
+        .uploaded-logo-container {
+            margin: 1rem 0;
+            padding: 1rem;
+        }
+
+        .uploaded-logo {
+            max-width: 200px;
+            max-height: 200px;
+        }
+
+        .homepage-mockup {
+            margin-top: 1.5rem;
+        }
+
+        .homepage-mockup h4 {
+            font-size: 1.1rem;
+        }
+
+        .ai-disclaimer {
+            font-size: 1rem;
+        }
+
+        .patience-message {
+            font-size: 1rem;
+        }
+
+        .campaign-name-section {
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .campaign-name-input {
+            padding: 0.6rem;
+            font-size: 1.1rem;
+        }
+    }
+
+    @media (max-width: 480px) {
+        .real-image-container {
+            max-height: 300px;
+        }
+
+        .uploaded-logo {
+            max-width: 150px;
+            max-height: 150px;
+        }
+
+        .uploaded-logo-container {
+            padding: 0.8rem;
+        }
+
+        .homepage-mockup h4 {
+            font-size: 1rem;
+        }
+
+        .ai-disclaimer {
+            font-size: 0.9rem;
+        }
+
+        .patience-message {
+            font-size: 0.9rem;
+        }
+
+        .campaign-name-input {
+            font-size: 1rem;
+        }
     }
 </style>
