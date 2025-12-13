@@ -17,11 +17,59 @@
         }
     });
 
+    async function sendPaymentNotification() {
+        // Send email notification using web3forms (same as contact form)
+        const message = `Someone clicked the "PROCEED TO PAYMENT" button!
+
+Campaign Details:
+- Campaign ID: ${$appState.campaignId || 'N/A'}
+- Campaign Name: ${$appState.name || 'N/A'}
+- User ID: ${$appState.userId || 'Not logged in'}
+- Letter Count: ${letterCount}
+- Total Price: $${totalPrice}
+
+Letter Subject: ${$appState.letter?.subject || 'N/A'}
+Return Address: ${$appState.returnAddress?.name || 'N/A'}, ${$appState.returnAddress?.city || 'N/A'}, ${$appState.returnAddress?.state || 'N/A'}
+
+Timestamp: ${new Date().toLocaleString()}`;
+
+        const emailData = {
+            access_key: import.meta.env.VITE_WEB3FORMS_KEY || '430289be-c656-4c27-a9fb-304940c74425',
+            name: 'Payment Button Click Notification',
+            email: 'noreply@waxletter.com',
+            message: message,
+            subject: 'Payment Button Clicked - Wax Letter',
+            from_name: 'Wax Letter Payment Notification',
+            to: 'hjconstas@gmail.com'
+        };
+
+        try {
+            // Send email notification (don't wait for response to avoid blocking)
+            fetch('https://api.web3forms.com/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(emailData)
+            }).catch(err => {
+                // Silently fail - we don't want to block payment if email fails
+                console.warn('Email notification failed:', err);
+            });
+        } catch (err) {
+            // Silently fail - we don't want to block payment if email fails
+            console.warn('Email notification error:', err);
+        }
+    }
+
     async function handlePayment() {
         loading = true;
         error = null;
 
         try {
+            // Send email notification first (fire and forget - don't block payment)
+            sendPaymentNotification();
+
             // Create checkout session
             const response = await fetch('/api/create-checkout', {
                 method: 'POST',

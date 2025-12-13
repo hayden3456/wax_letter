@@ -30,7 +30,8 @@ ${formData.get('message')}`;
       email: formData.get('email'),
       message: message,
       subject: 'Contact Form Submission from Wax Letter',
-      from_name: 'Wax Letter Contact Form'
+      from_name: 'Wax Letter Contact Form',
+      to: 'hjconstas@gmail.com'
     };
 
     try {

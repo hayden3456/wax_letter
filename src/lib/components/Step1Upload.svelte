@@ -1,87 +1,36 @@
-<script>
+<script lang="ts">
     import { appState } from '$lib/stores';
     import { createEventDispatcher } from 'svelte';
-    import { browser } from '$app/environment';
 
     const dispatch = createEventDispatcher();
 
-    let stampInput;
-    let isGenerating = false;
-    let generatedImage = null;
-    let loadingMessage = "Generating Seal...";
-    let loadingInterval;
+    let stampInput: HTMLInputElement;
 
-    const loadingMessages = [
-        "Heating the Wax...",
-        "Customizing the Stamp...",
-        "Preparing the Seal...",
-        "Crafting Your Design...",
-        "Applying the Impression...",
-        "Perfecting the Details..."
-    ];
-
-    function startLoadingAnimation() {
-        let index = 0;
-        loadingMessage = loadingMessages[index];
-        loadingInterval = setInterval(() => {
-            index = (index + 1) % loadingMessages.length;
-            loadingMessage = loadingMessages[index];
-        }, 2000);
-    }
-
-    function stopLoadingAnimation() {
-        if (loadingInterval) {
-            clearInterval(loadingInterval);
-            loadingInterval = null;
+    function handleDragOver(e: DragEvent) {
+        e.preventDefault();
+        if (e.currentTarget instanceof HTMLElement) {
+            e.currentTarget.classList.add('dragover');
         }
     }
 
-    async function convertSvgToPng(file) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const img = new Image();
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    const ctx = canvas.getContext('2d');
-                    ctx.drawImage(img, 0, 0);
-                    canvas.toBlob((blob) => {
-                        if (blob) {
-                            resolve(new File([blob], file.name.replace('.svg', '.png'), { type: 'image/png' }));
-                        } else {
-                            reject(new Error('Failed to convert SVG'));
-                        }
-                    }, 'image/png');
-                };
-                img.onerror = () => reject(new Error('Failed to load SVG'));
-                img.src = e.target.result;
-            };
-            reader.onerror = () => reject(new Error('Failed to read file'));
-            reader.readAsDataURL(file);
-        });
+    function handleDragLeave(e: DragEvent) {
+        if (e.currentTarget instanceof HTMLElement) {
+            e.currentTarget.classList.remove('dragover');
+        }
     }
 
-    function handleDragOver(e) {
+    function handleFileDrop(e: DragEvent) {
         e.preventDefault();
-        e.currentTarget.classList.add('dragover');
-    }
-
-    function handleDragLeave(e) {
-        e.currentTarget.classList.remove('dragover');
-    }
-
-    function handleFileDrop(e) {
-        e.preventDefault();
-        e.currentTarget.classList.remove('dragover');
-        const files = e.dataTransfer.files;
-        if (files.length > 0) {
+        if (e.currentTarget instanceof HTMLElement) {
+            e.currentTarget.classList.remove('dragover');
+        }
+        const files = e.dataTransfer?.files;
+        if (files && files.length > 0) {
             handleStampUpload(files[0]);
         }
     }
 
-    async function handleStampUpload(file) {
+    function handleStampUpload(file: File) {
         if (!file) return;
 
         const validTypes = ['image/svg+xml', 'image/png', 'image/jpeg', 'image/jpg'];
@@ -100,92 +49,20 @@
             return;
         }
 
-        isGenerating = true;
-        startLoadingAnimation();
-
-        try {
-            const reader = new FileReader();
-            reader.onload = function(e) {
+        const reader = new FileReader();
+        reader.onload = function(e: ProgressEvent<FileReader>) {
+            if (e.target?.result && typeof e.target.result === 'string') {
+                // @ts-expect-error - stampImage is a writable store property
                 $appState.stampImage = e.target.result;
-            };
-            reader.readAsDataURL(file);
-
-            // Convert SVG to PNG if needed for API
-            let apiFile = file;
-            if (file.type === 'image/svg+xml') {
-                apiFile = await convertSvgToPng(file);
-                // Check size again after conversion
-                if (apiFile.size > MAX_FILE_SIZE) {
-                    alert(`Converted file is too large (${(apiFile.size / (1024 * 1024)).toFixed(2)}MB). Please use a smaller SVG file.`);
-                    isGenerating = false;
-                    stopLoadingAnimation();
-                    if (stampInput) {
-                        stampInput.value = '';
-                    }
-                    return;
-                }
             }
-
-            // Generate AI preview
-            const formData = new FormData();
-            formData.append('logo', apiFile);
-
-            const response = await fetch('/api/generate-seal', {
-                method: 'POST',
-                body: formData,
-                keepalive: true // Help continue even if user navigates away
-            });
-
-            if (response.ok) {
-                const data = await response.json();
-                generatedImage = data.image;
-                
-                // Save AI letter image to campaign state (will be saved to campaign via auto-save)
-                if (generatedImage && browser) {
-                    $appState.aiLetterImage = generatedImage;
-                    console.log('✅ AI letter image saved to campaign state');
-                }
-            } else {
-                const errorData = await response.json().catch(() => ({ error: 'Unknown error' }));
-                console.error('Failed to generate seal preview:', response.status, errorData);
-                
-                if (response.status === 413) {
-                    alert('File is too large. Please use a smaller file (maximum 5MB).');
-                } else {
-                    alert(`Failed to generate preview: ${errorData.error || 'Server error'}`);
-                }
+        };
+        reader.onerror = function() {
+            alert('Failed to read file. Please try again.');
+            if (stampInput) {
+                stampInput.value = '';
             }
-        } catch (error) {
-            console.error('Error uploading file:', error);
-        } finally {
-            isGenerating = false;
-            stopLoadingAnimation();
-        }
-    }
-
-    // Track campaign ID to detect when it changes
-    let lastCampaignId = $appState.campaignId;
-    
-    // Load saved preview image from campaign state (reactive - updates when campaign loads)
-    $: if (browser) {
-        // Reset generatedImage if campaign changed
-        if ($appState.campaignId !== lastCampaignId) {
-            generatedImage = null;
-            lastCampaignId = $appState.campaignId;
-        }
-        
-        // Load AI letter image from campaign state (same way logos are loaded)
-        if (!generatedImage) {
-            if ($appState.aiLetterImageUrl) {
-                generatedImage = $appState.aiLetterImageUrl;
-                console.log('✅ Loaded AI letter image URL from campaign');
-            }
-            // Also check if campaign has the data URL stored
-            else if ($appState.aiLetterImage) {
-                generatedImage = $appState.aiLetterImage;
-                console.log('✅ Loaded AI letter image from campaign state');
-            }
-        }
+        };
+        reader.readAsDataURL(file);
     }
 </script>
 
@@ -221,45 +98,34 @@
             bind:this={stampInput} 
             accept=".svg,.png,.jpg,.jpeg" 
             hidden 
-            on:change={(e) => handleStampUpload(e.target.files[0])}
+            on:change={(e) => {
+                const target = e.target as HTMLInputElement;
+                if (target.files && target.files[0]) {
+                    handleStampUpload(target.files[0]);
+                }
+            }}
         >
     </div>
 
-    {#if $appState.stampImage}
         <div class="preview-section" id="stampPreviewSection">
             <h3>Your Logo</h3>
             
             <!-- Uploaded Logo Display -->
             <div class="uploaded-logo-container">
-                <img src={$appState.stampImage} alt="Your stamp preview" class="uploaded-logo">
+                <img src={$appState.stampImage || '/waxletterlogo.png'} alt="Your stamp preview" class="uploaded-logo">
             </div>
 
             <!-- Wax Seal Preview -->
             <div class="homepage-mockup">
-                <h3>Wax Seal Preview</h3>
-                <h4 class="patience-message">Please be patient, due to high demand this is taking a while to load properly</h4>
-                <div class="real-image-container">
-                    {#if generatedImage}
-                        <img src={generatedImage} alt="Wax Sealed Letter with Custom Logo" class="hero-img generated">
-                    {:else}
-                        <img src="/single_letter_no_bg.png" alt="Wax Sealed Letter" class="hero-img">
-                    {/if}
-                    
-                    {#if isGenerating}
-                        <div class="loading-overlay">
-                            <div class="spinner"></div>
-                            <span>{loadingMessage}</span>
-                        </div>
-                    {/if}
+                <h3>Design Process</h3>
+                <div class="design-process-content">
+                    <p>We will email you your actual design and will iterate on your wax seal design once you order. You will receive a full refund if you do not like the results.</p>
+                    <p class="sample-option">
+                        Alternatively, <a href="/#contact" class="sample-link">contact us to get a sample made for free</a>.
+                    </p>
                 </div>
-                {#if generatedImage}
-                    <p class="ai-disclaimer">This is AI-generated. Not the actual wax seal. When you order we will get approval of the wax seal design via email.</p>
-                {/if}
             </div>
-
-            <button class="btn-secondary" on:click={() => stampInput.click()}>Change Image</button>
         </div>
-    {/if}
 
     <div class="step-actions">
         <a href="/" class="btn-secondary" style="text-decoration: none; display: inline-block; text-align: center;">Cancel</a>
